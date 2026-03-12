@@ -1,0 +1,1565 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Government Construction Cost Predictor - For Contractors</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <header class="govt-header">
+            <div class="header-content">
+                <div class="logo govt-logo">
+                    <i class="fas fa-landmark"></i>
+                </div>
+                <div class="header-text">
+                    <h1>Government Construction Cost & Delay Predictor</h1>
+                    <p class="subtitle">AI-Powered Estimation System for Government Contractors</p>
+                </div>
+            </div>
+            <div class="header-stats" id="header-stats">
+                <div class="stat-item">
+                    <i class="fas fa-building"></i>
+                    <span class="stat-value" id="total-projects-stat">0</span>
+                    <span class="stat-label">Projects</span>
+                </div>
+                <div class="stat-item">
+                    <i class="fas fa-chart-line"></i>
+                    <span class="stat-value" id="total-predictions-stat">0</span>
+                    <span class="stat-label">Predictions</span>
+                </div>
+                <div class="stat-item">
+                    <i class="fas fa-shield-alt"></i>
+                    <span class="stat-value" id="avg-risk-stat">0</span>
+                    <span class="stat-label">Avg Risk</span>
+                </div>
+            </div>
+        </header>
+
+        <nav class="tabs">
+            <button class="tab-btn active" data-tab="dashboard">
+                <i class="fas fa-tachometer-alt"></i> Dashboard
+            </button>
+            <button class="tab-btn" data-tab="predict">
+                <i class="fas fa-calculator"></i> New Prediction
+            </button>
+            <button class="tab-btn" data-tab="live-rates">
+                <i class="fas fa-rupee-sign"></i> Live Rates
+                <span class="alert-badge hidden" id="rates-alert-badge">!</span>
+            </button>
+            <button class="tab-btn" data-tab="projects">
+                <i class="fas fa-folder-open"></i> Projects
+            </button>
+            <button class="tab-btn" data-tab="history">
+                <i class="fas fa-history"></i> History
+            </button>
+            <button class="tab-btn" data-tab="compare">
+                <i class="fas fa-balance-scale"></i> Compare
+            </button>
+            <button class="tab-btn" data-tab="analytics">
+                <i class="fas fa-chart-pie"></i> Analytics
+            </button>
+        </nav>
+
+        <!-- Dashboard Tab -->
+        <section id="dashboard" class="tab-content active">
+            <div class="dashboard-grid">
+                <!-- Quick Stats Cards -->
+                <div class="dashboard-card stats-card">
+                    <div class="card-header">
+                        <h3><i class="fas fa-chart-bar"></i> Overview Statistics</h3>
+                    </div>
+                    <div class="stats-grid">
+                        <div class="stat-box">
+                            <div class="stat-icon residential"><i class="fas fa-home"></i></div>
+                            <div class="stat-info">
+                                <span class="stat-number" id="residential-count">0</span>
+                                <span class="stat-text">Residential</span>
+                            </div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="stat-icon commercial"><i class="fas fa-building"></i></div>
+                            <div class="stat-info">
+                                <span class="stat-number" id="commercial-count">0</span>
+                                <span class="stat-text">Commercial</span>
+                            </div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="stat-icon industrial"><i class="fas fa-industry"></i></div>
+                            <div class="stat-info">
+                                <span class="stat-number" id="industrial-count">0</span>
+                                <span class="stat-text">Industrial</span>
+                            </div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="stat-icon infrastructure"><i class="fas fa-road"></i></div>
+                            <div class="stat-info">
+                                <span class="stat-number" id="infrastructure-count">0</span>
+                                <span class="stat-text">Infrastructure</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Project Type Distribution Chart -->
+                <div class="dashboard-card chart-card">
+                    <div class="card-header">
+                        <h3><i class="fas fa-pie-chart"></i> Project Distribution</h3>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="projectTypeChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Risk Overview Chart -->
+                <div class="dashboard-card chart-card">
+                    <div class="card-header">
+                        <h3><i class="fas fa-exclamation-triangle"></i> Risk Distribution</h3>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="riskDistributionChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Recent Predictions -->
+                <div class="dashboard-card recent-card">
+                    <div class="card-header">
+                        <h3><i class="fas fa-clock"></i> Recent Predictions</h3>
+                        <button class="btn-link" onclick="switchToTab('history')">View All</button>
+                    </div>
+                    <div class="recent-predictions-list" id="recent-predictions-list">
+                        <p class="empty-state">No predictions yet. Make your first prediction!</p>
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="dashboard-card actions-card">
+                    <div class="card-header">
+                        <h3><i class="fas fa-bolt"></i> Quick Actions</h3>
+                    </div>
+                    <div class="quick-actions">
+                        <button class="action-btn" onclick="switchToTab('predict')">
+                            <i class="fas fa-plus-circle"></i>
+                            <span>New Prediction</span>
+                        </button>
+                        <button class="action-btn" onclick="switchToTab('projects')">
+                            <i class="fas fa-folder-plus"></i>
+                            <span>Add Project</span>
+                        </button>
+                        <button class="action-btn" onclick="switchToTab('compare')">
+                            <i class="fas fa-code-compare"></i>
+                            <span>Compare Scenarios</span>
+                        </button>
+                        <button class="action-btn" onclick="exportAllData()">
+                            <i class="fas fa-download"></i>
+                            <span>Export Data</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Cost Trends Chart -->
+                <div class="dashboard-card chart-card wide">
+                    <div class="card-header">
+                        <h3><i class="fas fa-chart-line"></i> Cost Prediction Trends</h3>
+                    </div>
+                    <div class="chart-container-wide">
+                        <canvas id="costTrendChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Live Rates Tab -->
+        <section id="live-rates" class="tab-content">
+            <div class="rates-container">
+                <div class="rates-header">
+                    <h2>
+                        <i class="fas fa-rupee-sign"></i> Live Material & Labor Rates
+                        <span class="live-indicator" id="live-indicator" title="Live data">
+                            <span class="live-dot"></span>
+                            LIVE
+                        </span>
+                    </h2>
+                    <div class="rates-controls">
+                        <div class="region-selector">
+                            <label for="rate-region"><i class="fas fa-map-marker-alt"></i> Region:</label>
+                            <select id="rate-region" onchange="loadRatesForRegion()">
+                                <option value="north">North India (Delhi, UP, Punjab)</option>
+                                <option value="south">South India (TN, Kerala, Karnataka)</option>
+                                <option value="west" selected>West India (Maharashtra, Gujarat)</option>
+                                <option value="east">East India (WB, Bihar, Odisha)</option>
+                                <option value="central">Central India (MP, Chhattisgarh)</option>
+                                <option value="northeast">North East India</option>
+                            </select>
+                        </div>
+                        <button class="btn btn-refresh" id="refresh-rates-btn" onclick="refreshLivePrices()">
+                            <i class="fas fa-sync-alt"></i> Refresh
+                        </button>
+                        <div class="last-updated">
+                            <i class="fas fa-clock"></i> Last Updated: <span id="rates-last-updated">--</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Price Alerts Section -->
+                <div class="alerts-section" id="price-alerts-section">
+                    <h3><i class="fas fa-bell"></i> Price Alerts <span class="alert-count" id="alert-count">0</span></h3>
+                    <div class="alerts-list" id="alerts-list">
+                        <!-- Alerts will be populated dynamically -->
+                        <div class="no-alerts">No price alerts at this time</div>
+                    </div>
+                </div>
+
+                <!-- Key Materials Summary -->
+                <div class="key-rates-grid">
+                    <!-- Cement Card -->
+                    <div class="rate-card cement">
+                        <div class="rate-card-header">
+                            <i class="fas fa-cube"></i>
+                            <h4>Cement (OPC 43)</h4>
+                        </div>
+                        <div class="rate-card-body">
+                            <div class="current-rate">
+                                <span class="rate-value" id="cement-rate">Rs. 380</span>
+                                <span class="rate-unit">per bag (50kg)</span>
+                            </div>
+                            <div class="rate-trend" id="cement-trend">
+                                <i class="fas fa-arrow-up"></i>
+                                <span>+2.5% this month</span>
+                            </div>
+                        </div>
+                        <div class="rate-card-footer">
+                            <div class="brand-rates">
+                                <small>UltraTech: Rs.390 | ACC: Rs.385 | Ambuja: Rs.380</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Steel Card -->
+                    <div class="rate-card steel">
+                        <div class="rate-card-header">
+                            <i class="fas fa-tools"></i>
+                            <h4>TMT Steel (Fe500)</h4>
+                        </div>
+                        <div class="rate-card-body">
+                            <div class="current-rate">
+                                <span class="rate-value" id="steel-rate">Rs. 72</span>
+                                <span class="rate-unit">per kg</span>
+                            </div>
+                            <div class="rate-trend" id="steel-trend">
+                                <i class="fas fa-minus"></i>
+                                <span>Stable</span>
+                            </div>
+                        </div>
+                        <div class="rate-card-footer">
+                            <div class="brand-rates">
+                                <small>TATA: Rs.75 | SAIL: Rs.72 | JSW: Rs.73</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Sand Card -->
+                    <div class="rate-card sand">
+                        <div class="rate-card-header">
+                            <i class="fas fa-mountain"></i>
+                            <h4>River Sand</h4>
+                        </div>
+                        <div class="rate-card-body">
+                            <div class="current-rate">
+                                <span class="rate-value" id="sand-rate">Rs. 2,200</span>
+                                <span class="rate-unit">per cum</span>
+                            </div>
+                            <div class="rate-trend" id="sand-trend">
+                                <i class="fas fa-arrow-up"></i>
+                                <span>+5% this month</span>
+                            </div>
+                        </div>
+                        <div class="rate-card-footer">
+                            <small>M-Sand Alternative: Rs.1,500/cum</small>
+                        </div>
+                    </div>
+
+                    <!-- Aggregate Card -->
+                    <div class="rate-card aggregate">
+                        <div class="rate-card-header">
+                            <i class="fas fa-cubes"></i>
+                            <h4>Aggregate (20mm)</h4>
+                        </div>
+                        <div class="rate-card-body">
+                            <div class="current-rate">
+                                <span class="rate-value" id="aggregate-rate">Rs. 1,800</span>
+                                <span class="rate-unit">per cum</span>
+                            </div>
+                            <div class="rate-trend" id="aggregate-trend">
+                                <i class="fas fa-arrow-down"></i>
+                                <span>-1% this month</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Bricks Card -->
+                    <div class="rate-card bricks">
+                        <div class="rate-card-header">
+                            <i class="fas fa-th-large"></i>
+                            <h4>Bricks (1st Class)</h4>
+                        </div>
+                        <div class="rate-card-body">
+                            <div class="current-rate">
+                                <span class="rate-value" id="brick-rate">Rs. 8,500</span>
+                                <span class="rate-unit">per 1000 nos</span>
+                            </div>
+                            <div class="rate-trend" id="brick-trend">
+                                <i class="fas fa-minus"></i>
+                                <span>Stable</span>
+                            </div>
+                        </div>
+                        <div class="rate-card-footer">
+                            <small>Fly Ash Bricks: Rs.5,500/1000</small>
+                        </div>
+                    </div>
+
+                    <!-- Labor Card -->
+                    <div class="rate-card labor">
+                        <div class="rate-card-header">
+                            <i class="fas fa-hard-hat"></i>
+                            <h4>Mason (Skilled)</h4>
+                        </div>
+                        <div class="rate-card-body">
+                            <div class="current-rate">
+                                <span class="rate-value" id="mason-rate">Rs. 850</span>
+                                <span class="rate-unit">per day</span>
+                            </div>
+                            <div class="rate-trend" id="mason-trend">
+                                <i class="fas fa-arrow-up"></i>
+                                <span>+3% this month</span>
+                            </div>
+                        </div>
+                        <div class="rate-card-footer">
+                            <small>Helper: Rs.600 | Unskilled: Rs.550</small>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Detailed Rates Tables -->
+                <div class="rates-tables">
+                    <!-- Materials Table -->
+                    <div class="rates-table-section">
+                        <h3><i class="fas fa-box-open"></i> All Material Rates</h3>
+                        <div class="table-filters">
+                            <select id="material-category-filter" onchange="filterMaterialsTable()">
+                                <option value="all">All Categories</option>
+                                <option value="cement">Cement</option>
+                                <option value="steel">Steel</option>
+                                <option value="aggregates">Aggregates</option>
+                                <option value="bricks">Bricks & Blocks</option>
+                            </select>
+                            <input type="text" id="material-search" placeholder="Search materials..." onkeyup="filterMaterialsTable()">
+                        </div>
+                        <div class="table-container">
+                            <table class="rates-table" id="materials-table">
+                                <thead>
+                                    <tr>
+                                        <th>Material</th>
+                                        <th>Category</th>
+                                        <th>Unit</th>
+                                        <th>Current Rate</th>
+                                        <th>Trend</th>
+                                        <th>6M Change</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="materials-tbody">
+                                    <!-- Materials will be populated dynamically -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Labor Rates Table -->
+                    <div class="rates-table-section">
+                        <h3><i class="fas fa-users"></i> Labor Rates</h3>
+                        <div class="table-container">
+                            <table class="rates-table" id="labor-table">
+                                <thead>
+                                    <tr>
+                                        <th>Labor Type</th>
+                                        <th>Skill Level</th>
+                                        <th>Daily Rate</th>
+                                        <th>Trend</th>
+                                        <th>Change</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="labor-tbody">
+                                    <!-- Labor rates will be populated dynamically -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Price Trend Charts -->
+                <div class="trend-charts-section">
+                    <h3><i class="fas fa-chart-line"></i> Price Trends (Last 12 Months)</h3>
+                    <div class="trend-charts-grid">
+                        <div class="trend-chart-card">
+                            <h4>Cement Price Trend</h4>
+                            <canvas id="cementTrendChart"></canvas>
+                        </div>
+                        <div class="trend-chart-card">
+                            <h4>Steel Price Trend</h4>
+                            <canvas id="steelTrendChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Update Rate Modal -->
+                <div id="update-rate-modal" class="modal hidden">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h3><i class="fas fa-edit"></i> Update Rate</h3>
+                            <button class="close-modal" onclick="closeUpdateModal()">&times;</button>
+                        </div>
+                        <div class="modal-body">
+                            <p>Material: <strong id="update-material-name"></strong></p>
+                            <p>Current Rate: <strong id="update-current-rate"></strong></p>
+                            <div class="form-group">
+                                <label for="new-rate">New Rate:</label>
+                                <input type="number" id="new-rate" step="0.01" min="0">
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button class="btn btn-secondary" onclick="closeUpdateModal()">Cancel</button>
+                            <button class="btn btn-primary" onclick="saveNewRate()">Update Rate</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Prediction Form Tab -->
+        <section id="predict" class="tab-content">
+            <div class="form-container govt-form">
+                <h2><i class="fas fa-file-contract"></i> Government Project Parameters</h2>
+                <form id="prediction-form">
+                    <!-- Work Name Section - User Provided -->
+                    <div class="work-name-section">
+                        <div class="form-group work-name-group">
+                            <label for="work_name"><i class="fas fa-briefcase"></i> Work Name / Project Title *</label>
+                            <input type="text" id="work_name" name="work_name" required
+                                   placeholder="Enter the official work name (e.g., Construction of Community Hall at Village Rampur)"
+                                   class="work-name-input">
+                            <small class="hint">Enter the exact work name as per tender/contract document</small>
+                        </div>
+                        <div id="work-name-display" class="work-name-display hidden">
+                            <i class="fas fa-bookmark"></i> <span id="work-name-text"></span>
+                        </div>
+                    </div>
+
+                    <!-- Government Details Section -->
+                    <div class="form-section govt-details-section">
+                        <h3 class="section-title"><i class="fas fa-landmark"></i> Government Contract Details</h3>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="tender_number">Tender/Contract Number</label>
+                                <input type="text" id="tender_number" name="tender_number" placeholder="e.g., PWD/2024/1234">
+                            </div>
+                            <div class="form-group">
+                                <label for="department">Department/Agency *</label>
+                                <select id="department" name="department" required>
+                                    <option value="">Select Department</option>
+                                    <option value="PWD">Public Works Department (PWD)</option>
+                                    <option value="CPWD">Central PWD (CPWD)</option>
+                                    <option value="NHAI">National Highways Authority (NHAI)</option>
+                                    <option value="Railways">Indian Railways</option>
+                                    <option value="MES">Military Engineering Services (MES)</option>
+                                    <option value="Irrigation">Irrigation Department</option>
+                                    <option value="Rural_Dev">Rural Development</option>
+                                    <option value="Urban_Dev">Urban Development</option>
+                                    <option value="Panchayat">Panchayati Raj</option>
+                                    <option value="Municipal">Municipal Corporation</option>
+                                    <option value="Housing">Housing Board</option>
+                                    <option value="Education">Education Department</option>
+                                    <option value="Health">Health Department</option>
+                                    <option value="Other">Other Government Body</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="scheme_name">Scheme/Program Name</label>
+                                <select id="scheme_name" name="scheme_name">
+                                    <option value="">Select Scheme (if applicable)</option>
+                                    <option value="PMAY">Pradhan Mantri Awas Yojana (PMAY)</option>
+                                    <option value="PMGSY">Pradhan Mantri Gram Sadak Yojana (PMGSY)</option>
+                                    <option value="AMRUT">AMRUT Mission</option>
+                                    <option value="Smart_City">Smart City Mission</option>
+                                    <option value="Jal_Jeevan">Jal Jeevan Mission</option>
+                                    <option value="Swachh_Bharat">Swachh Bharat Mission</option>
+                                    <option value="MGNREGA">MGNREGA</option>
+                                    <option value="State_Scheme">State Government Scheme</option>
+                                    <option value="Other">Other Scheme</option>
+                                    <option value="None">Not under any scheme</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="contractor_class">Contractor Class/Category</label>
+                                <select id="contractor_class" name="contractor_class">
+                                    <option value="Class_A">Class A (Above 5 Cr)</option>
+                                    <option value="Class_B" selected>Class B (1-5 Cr)</option>
+                                    <option value="Class_C">Class C (25L-1 Cr)</option>
+                                    <option value="Class_D">Class D (Below 25L)</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Contract Value Section - For Profit Calculation -->
+                    <div class="form-section contract-value-section">
+                        <h3 class="section-title"><i class="fas fa-file-invoice-dollar"></i> Contract Value (For Profit Analysis)</h3>
+                        <div class="contract-value-info">
+                            <i class="fas fa-info-circle"></i>
+                            <span>Enter the tender/contract amount to calculate your expected profit or loss</span>
+                        </div>
+                        <div class="form-grid">
+                            <div class="form-group contract-value-group">
+                                <label for="contract_value"><i class="fas fa-rupee-sign"></i> Contract/Tender Value (Rs.) *</label>
+                                <input type="number" id="contract_value" name="contract_value"
+                                       placeholder="e.g., 5000000" min="0" step="1000"
+                                       class="contract-value-input">
+                                <small class="hint">The amount government will pay you for this work (as per tender/contract)</small>
+                            </div>
+                            <div class="form-group">
+                                <label for="bid_percentage">Bid Percentage (if applicable)</label>
+                                <div class="bid-input-group">
+                                    <select id="bid_type" name="bid_type">
+                                        <option value="at_par">At Par (0%)</option>
+                                        <option value="above">Above (+)</option>
+                                        <option value="below">Below (-)</option>
+                                    </select>
+                                    <input type="number" id="bid_percentage" name="bid_percentage"
+                                           placeholder="0" min="0" max="50" step="0.1" value="0">
+                                    <span class="percent-sign">%</span>
+                                </div>
+                                <small class="hint">Your bid above/below the estimated tender value</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Smart Project Name Input -->
+                    <div class="smart-input-section">
+                        <div class="form-group" style="margin-bottom: 20px;">
+                            <label for="project_name"><i class="fas fa-magic"></i> Project Category (Auto-Detection)</label>
+                            <input type="text" id="project_name" name="project_name"
+                                   placeholder="e.g., Road Construction, School Building, Hospital, Bridge..."
+                                   style="width: 100%;">
+                            <small class="hint">Type keywords to auto-detect project type and parameters</small>
+                        </div>
+                        <div id="detected-info" class="detected-info hidden">
+                            <span class="detected-badge"><i class="fas fa-check-circle"></i> Auto-detected: <strong id="detected-type"></strong></span>
+                        </div>
+                    </div>
+
+                    <!-- Basic Information Section -->
+                    <div class="form-section">
+                        <h3 class="section-title"><i class="fas fa-info-circle"></i> Basic Information</h3>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="project_type">Project Type *</label>
+                                <select id="project_type" name="project_type" required>
+                                    <option value="residential">Residential (Housing/Quarters)</option>
+                                    <option value="commercial">Commercial (Offices/Buildings)</option>
+                                    <option value="industrial">Industrial (Factories/Warehouses)</option>
+                                    <option value="infrastructure" selected>Infrastructure (Roads/Bridges)</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group location-group">
+                                <label for="location"><i class="fas fa-map-marker-alt"></i> Location / Place Name *</label>
+                                <div class="location-input-wrapper">
+                                    <input type="text" id="location" name="location" required
+                                           placeholder="Start typing district/city name..."
+                                           autocomplete="off">
+                                    <div id="location-suggestions" class="location-suggestions hidden"></div>
+                                </div>
+                                <div id="selected-location" class="selected-location hidden">
+                                    <i class="fas fa-check-circle"></i> <span id="location-text"></span>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="total_area_sqft">Total Area (sq ft) *</label>
+                                <input type="number" id="total_area_sqft" name="total_area_sqft" required min="100" value="10000">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="num_floors">Number of Floors</label>
+                                <input type="number" id="num_floors" name="num_floors" min="1" value="1">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Resource Planning Section -->
+                    <div class="form-section">
+                        <h3 class="section-title"><i class="fas fa-users"></i> Resource Planning</h3>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="num_workers">Number of Workers *</label>
+                                <input type="number" id="num_workers" name="num_workers" required min="1" value="20">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="planned_duration_days">Planned Duration (days) *</label>
+                                <input type="number" id="planned_duration_days" name="planned_duration_days" required min="1" value="180">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="contractor_experience_years">Contractor Experience (years)</label>
+                                <input type="number" id="contractor_experience_years" name="contractor_experience_years" min="0" value="5">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="num_supervisors">Number of Supervisors</label>
+                                <input type="number" id="num_supervisors" name="num_supervisors" min="1" value="2">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Quality & Complexity Section -->
+                    <div class="form-section">
+                        <h3 class="section-title"><i class="fas fa-gem"></i> Quality & Complexity</h3>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="material_quality">Material Quality</label>
+                                <select id="material_quality" name="material_quality">
+                                    <option value="economy">Economy</option>
+                                    <option value="standard" selected>Standard</option>
+                                    <option value="premium">Premium</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="complexity_level">Complexity Level</label>
+                                <select id="complexity_level" name="complexity_level">
+                                    <option value="low">Low</option>
+                                    <option value="medium" selected>Medium</option>
+                                    <option value="high">High</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="design_type">Design Type</label>
+                                <select id="design_type" name="design_type">
+                                    <option value="standard">Standard</option>
+                                    <option value="custom">Custom</option>
+                                    <option value="architectural">Architectural</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="green_building">Green Building Certification</label>
+                                <select id="green_building" name="green_building">
+                                    <option value="none" selected>None</option>
+                                    <option value="basic">Basic (IGBC Silver)</option>
+                                    <option value="advanced">Advanced (IGBC Gold)</option>
+                                    <option value="premium">Premium (IGBC Platinum)</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Site Conditions Section -->
+                    <div class="form-section">
+                        <h3 class="section-title"><i class="fas fa-mountain"></i> Site Conditions</h3>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="weather_risk_zone">Weather Risk Zone</label>
+                                <select id="weather_risk_zone" name="weather_risk_zone">
+                                    <option value="low">Low</option>
+                                    <option value="moderate" selected>Moderate</option>
+                                    <option value="high">High</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="soil_type">Soil Type</label>
+                                <select id="soil_type" name="soil_type">
+                                    <option value="normal" selected>Normal</option>
+                                    <option value="rocky">Rocky</option>
+                                    <option value="sandy">Sandy</option>
+                                    <option value="clay">Clay</option>
+                                    <option value="marshy">Marshy</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="seismic_zone">Seismic Zone</label>
+                                <select id="seismic_zone" name="seismic_zone">
+                                    <option value="zone2">Zone II (Low)</option>
+                                    <option value="zone3" selected>Zone III (Moderate)</option>
+                                    <option value="zone4">Zone IV (High)</option>
+                                    <option value="zone5">Zone V (Very High)</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="site_accessibility">Site Accessibility</label>
+                                <select id="site_accessibility" name="site_accessibility">
+                                    <option value="easy" selected>Easy Access</option>
+                                    <option value="moderate">Moderate</option>
+                                    <option value="difficult">Difficult</option>
+                                    <option value="remote">Remote Location</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Infrastructure Work Section (for roads, drains, etc.) -->
+                    <div class="form-section infrastructure-section" id="infrastructure-section" style="display: none;">
+                        <h3 class="section-title"><i class="fas fa-road"></i> Infrastructure Work Details</h3>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="work_type">Work Type *</label>
+                                <select id="work_type" name="work_type">
+                                    <option value="road">Road / Highway / Street</option>
+                                    <option value="drain">Drain / Nala / Sewage</option>
+                                    <option value="culvert">Culvert / Bridge</option>
+                                    <option value="pavement">Pavement / Footpath</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group road-field">
+                                <label for="road_length_m">Road/Drain Length (meters) *</label>
+                                <input type="number" id="road_length_m" name="road_length_m" min="10" value="500" placeholder="e.g., 1000">
+                            </div>
+
+                            <div class="form-group road-field">
+                                <label for="road_width_m">Road/Drain Width (meters) *</label>
+                                <input type="number" id="road_width_m" name="road_width_m" min="1" step="0.5" value="5" placeholder="e.g., 7">
+                            </div>
+
+                            <div class="form-group road-field">
+                                <label for="road_type">Road Surface Type</label>
+                                <select id="road_type" name="road_type">
+                                    <option value="bituminous">Bituminous (BT Road)</option>
+                                    <option value="concrete">Cement Concrete (CC Road)</option>
+                                    <option value="wbm">WBM / Gravel Road</option>
+                                    <option value="interlocking">Interlocking Paver</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group drain-field" style="display: none;">
+                                <label for="drain_depth_m">Drain Depth (meters)</label>
+                                <input type="number" id="drain_depth_m" name="drain_depth_m" min="0.3" step="0.1" value="0.6" placeholder="e.g., 0.6">
+                            </div>
+
+                            <div class="form-group drain-field" style="display: none;">
+                                <label for="drain_type">Drain Type</label>
+                                <select id="drain_type" name="drain_type">
+                                    <option value="open">Open Pucca Drain</option>
+                                    <option value="covered">Covered Drain</option>
+                                    <option value="pipe">RCC Pipe Drain</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Additional Features Section -->
+                    <div class="form-section" id="building-features-section">
+                        <h3 class="section-title"><i class="fas fa-plus-square"></i> Additional Features</h3>
+                        <div class="checkbox-grid">
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="has_basement" name="has_basement">
+                                <label for="has_basement"><i class="fas fa-warehouse"></i> Has Basement</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="has_parking" name="has_parking">
+                                <label for="has_parking"><i class="fas fa-parking"></i> Parking Structure</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="has_elevator" name="has_elevator">
+                                <label for="has_elevator"><i class="fas fa-elevator"></i> Elevator/Lift</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="has_swimming_pool" name="has_swimming_pool">
+                                <label for="has_swimming_pool"><i class="fas fa-swimming-pool"></i> Swimming Pool</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="has_hvac" name="has_hvac">
+                                <label for="has_hvac"><i class="fas fa-snowflake"></i> Central HVAC</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="has_fire_system" name="has_fire_system" checked>
+                                <label for="has_fire_system"><i class="fas fa-fire-extinguisher"></i> Fire Safety System</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="has_smart_systems" name="has_smart_systems">
+                                <label for="has_smart_systems"><i class="fas fa-robot"></i> Smart Building Systems</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="requires_demolition" name="requires_demolition">
+                                <label for="requires_demolition"><i class="fas fa-hammer"></i> Requires Demolition</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Permit & Regulatory Section -->
+                    <div class="form-section">
+                        <h3 class="section-title"><i class="fas fa-file-contract"></i> Permits & Regulatory</h3>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="permit_status">Permit Status</label>
+                                <select id="permit_status" name="permit_status">
+                                    <option value="approved">All Approved</option>
+                                    <option value="pending" selected>Pending</option>
+                                    <option value="partial">Partially Approved</option>
+                                    <option value="not_applied">Not Applied</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="environmental_clearance">Environmental Clearance</label>
+                                <select id="environmental_clearance" name="environmental_clearance">
+                                    <option value="not_required" selected>Not Required</option>
+                                    <option value="approved">Approved</option>
+                                    <option value="pending">Pending</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Estimation Type Selection -->
+                    <div class="form-section estimation-type-section">
+                        <h3 class="section-title"><i class="fas fa-calculator"></i> Estimation Method</h3>
+                        <div class="estimation-toggle">
+                            <label class="toggle-option">
+                                <input type="radio" name="estimation_type" value="boq" checked>
+                                <span class="toggle-label">
+                                    <i class="fas fa-file-invoice"></i>
+                                    <strong>SOR-Based BOQ Estimate</strong>
+                                    <small>Detailed Bill of Quantities based on Schedule of Rates (Recommended for Tenders)</small>
+                                </span>
+                            </label>
+                            <label class="toggle-option">
+                                <input type="radio" name="estimation_type" value="ml">
+                                <span class="toggle-label">
+                                    <i class="fas fa-brain"></i>
+                                    <strong>AI/ML Quick Estimate</strong>
+                                    <small>Machine learning based rough estimate with risk analysis</small>
+                                </span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="form-actions-main">
+                        <button type="submit" class="btn btn-primary btn-lg" id="generate-estimate-btn">
+                            <i class="fas fa-file-invoice-dollar"></i> Generate SOR-Based Estimate
+                        </button>
+                        <button type="reset" class="btn btn-secondary">
+                            <i class="fas fa-redo"></i> Reset Form
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <div id="prediction-result" class="result-container hidden">
+                <h2><i class="fas fa-chart-bar"></i> Prediction Results</h2>
+
+                <div id="result-project-name" class="result-project-header hidden">
+                    <span class="project-label">Project:</span>
+                    <span id="result-project-title" class="project-title"></span>
+                    <span id="result-project-type-badge" class="type-badge"></span>
+                </div>
+
+                <!-- BOQ Section (for SOR-based estimates) -->
+                <div id="boq-section" class="boq-section hidden">
+                    <div class="boq-header">
+                        <h3><i class="fas fa-file-invoice"></i> Bill of Quantities (BOQ) - Based on SOR/DSR Rates</h3>
+                        <div class="boq-info">
+                            <span class="info-badge"><i class="fas fa-map-marker-alt"></i> Location Factor: <strong id="boq-location-factor">1.0</strong></span>
+                            <span class="info-badge"><i class="fas fa-gem"></i> Quality Factor: <strong id="boq-quality-factor">1.0</strong></span>
+                        </div>
+                    </div>
+
+                    <div class="boq-table-container">
+                        <table class="boq-table" id="boq-table">
+                            <thead>
+                                <tr>
+                                    <th>S.No</th>
+                                    <th>Item of Work</th>
+                                    <th>Description</th>
+                                    <th>Unit</th>
+                                    <th>Quantity</th>
+                                    <th>Rate (Rs.)</th>
+                                    <th>Amount (Rs.)</th>
+                                </tr>
+                            </thead>
+                            <tbody id="boq-tbody">
+                                <!-- BOQ items will be populated dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- BOQ Summary -->
+                    <div class="boq-summary">
+                        <div class="summary-row">
+                            <span class="label">Sub Total (A)</span>
+                            <span class="value" id="boq-subtotal">Rs. 0</span>
+                        </div>
+                        <div class="summary-row">
+                            <span class="label">Contractor Profit (10%)</span>
+                            <span class="value" id="boq-profit">Rs. 0</span>
+                        </div>
+                        <div class="summary-row">
+                            <span class="label">Overhead Charges (5%)</span>
+                            <span class="value" id="boq-overhead">Rs. 0</span>
+                        </div>
+                        <div class="summary-row">
+                            <span class="label">Contingency (3%)</span>
+                            <span class="value" id="boq-contingency">Rs. 0</span>
+                        </div>
+                        <div class="summary-row subtotal">
+                            <span class="label">Amount Before GST (B)</span>
+                            <span class="value" id="boq-before-gst">Rs. 0</span>
+                        </div>
+                        <div class="summary-row">
+                            <span class="label">GST @ <span id="boq-gst-rate">12</span>%</span>
+                            <span class="value" id="boq-gst">Rs. 0</span>
+                        </div>
+                        <div class="summary-row">
+                            <span class="label">Labour Cess (1%)</span>
+                            <span class="value" id="boq-cess">Rs. 0</span>
+                        </div>
+                        <div class="summary-row grand-total">
+                            <span class="label">GRAND TOTAL</span>
+                            <span class="value" id="boq-grand-total">Rs. 0</span>
+                        </div>
+                        <div class="summary-row cost-per-unit">
+                            <span class="label" id="cost-per-unit-label">Cost per Sq.Ft.</span>
+                            <span class="value" id="boq-cost-per-unit">Rs. 0</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Profit Analysis Section (Works for both BOQ and ML results) -->
+                <div class="profit-analysis-section" id="profit-analysis-section" style="display: none;">
+                    <h3 class="profit-section-title"><i class="fas fa-chart-line"></i> Profit Analysis for Contractor</h3>
+                    <div class="profit-cards">
+                        <div class="profit-card contract-value-card">
+                            <div class="profit-card-icon"><i class="fas fa-file-contract"></i></div>
+                            <div class="profit-card-content">
+                                <span class="profit-card-label">Contract Value</span>
+                                <span class="profit-card-value" id="profit-contract-value">Rs. 0</span>
+                                <span class="profit-card-sublabel">What Govt. Pays You</span>
+                            </div>
+                        </div>
+                        <div class="profit-card construction-cost-card">
+                            <div class="profit-card-icon"><i class="fas fa-tools"></i></div>
+                            <div class="profit-card-content">
+                                <span class="profit-card-label">Construction Cost</span>
+                                <span class="profit-card-value" id="profit-construction-cost">Rs. 0</span>
+                                <span class="profit-card-sublabel">Predicted Cost to Build</span>
+                            </div>
+                        </div>
+                        <div class="profit-card profit-amount-card" id="profit-amount-card">
+                            <div class="profit-card-icon"><i class="fas fa-hand-holding-usd"></i></div>
+                            <div class="profit-card-content">
+                                <span class="profit-card-label">Your Profit/Loss</span>
+                                <span class="profit-card-value" id="profit-amount">Rs. 0</span>
+                                <span class="profit-card-sublabel" id="profit-margin-label">0% Margin</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="profit-viability" id="profit-viability">
+                        <div class="viability-indicator" id="viability-indicator">
+                            <i class="fas fa-check-circle"></i>
+                            <span id="viability-text">Enter Contract Value to see profit analysis</span>
+                        </div>
+                        <div class="viability-recommendation" id="viability-recommendation"></div>
+                    </div>
+                    <div class="profit-breakdown" id="profit-breakdown">
+                        <h4><i class="fas fa-calculator"></i> Detailed Breakdown</h4>
+                        <table class="profit-breakdown-table">
+                            <tr>
+                                <td>Contract Value (A)</td>
+                                <td class="text-right" id="pb-contract-value">Rs. 0</td>
+                            </tr>
+                            <tr>
+                                <td>(-) Material & Labor Cost</td>
+                                <td class="text-right" id="pb-material-cost">Rs. 0</td>
+                            </tr>
+                            <tr>
+                                <td>(-) Overhead & Contingency</td>
+                                <td class="text-right" id="pb-overhead-cost">Rs. 0</td>
+                            </tr>
+                            <tr>
+                                <td>(-) GST Payable</td>
+                                <td class="text-right" id="pb-gst-cost">Rs. 0</td>
+                            </tr>
+                            <tr>
+                                <td>(-) Labour Cess</td>
+                                <td class="text-right" id="pb-cess-cost">Rs. 0</td>
+                            </tr>
+                            <tr class="profit-row" id="pb-profit-row">
+                                <td><strong>Net Profit/Loss (A - B)</strong></td>
+                                <td class="text-right"><strong id="pb-net-profit">Rs. 0</strong></td>
+                            </tr>
+                            <tr>
+                                <td>Profit Margin</td>
+                                <td class="text-right" id="pb-profit-margin">0%</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Main Metrics -->
+                <div class="results-grid" id="ml-results-grid">
+                    <div class="result-card cost">
+                        <div class="card-icon"><i class="fas fa-indian-rupee-sign"></i></div>
+                        <h3>Estimated Total Cost</h3>
+                        <div class="main-value" id="predicted-cost">₹0</div>
+                        <div class="range" id="cost-range">Range: ₹0 - ₹0</div>
+                        <div class="cost-per-sqft" id="cost-per-sqft">₹0 per sq ft</div>
+                    </div>
+
+                    <div class="result-card delay">
+                        <div class="card-icon"><i class="fas fa-clock"></i></div>
+                        <h3>Predicted Delay</h3>
+                        <div class="main-value" id="predicted-delay">0 days</div>
+                        <div class="range" id="delay-range">Range: 0 - 0 days</div>
+                        <div class="completion-date" id="completion-date">Est. completion: --</div>
+                    </div>
+
+                    <div class="result-card probability">
+                        <div class="card-icon"><i class="fas fa-percentage"></i></div>
+                        <h3>Delay Probability</h3>
+                        <div class="main-value" id="delay-probability">0%</div>
+                        <div class="probability-bar">
+                            <div class="probability-fill" id="probability-fill"></div>
+                        </div>
+                    </div>
+
+                    <div class="result-card risk">
+                        <div class="card-icon"><i class="fas fa-exclamation-triangle"></i></div>
+                        <h3>Risk Score</h3>
+                        <div class="main-value" id="risk-score">0</div>
+                        <div class="risk-meter">
+                            <div class="risk-fill" id="risk-fill"></div>
+                        </div>
+                        <div class="risk-label" id="risk-label">Low Risk</div>
+                    </div>
+                </div>
+
+                <!-- Cost Breakdown Section -->
+                <div class="breakdown-section">
+                    <h3><i class="fas fa-pie-chart"></i> Cost Breakdown</h3>
+                    <div class="breakdown-grid">
+                        <div class="breakdown-chart">
+                            <canvas id="costBreakdownChart"></canvas>
+                        </div>
+                        <div class="breakdown-details">
+                            <div class="breakdown-item">
+                                <span class="breakdown-label"><i class="fas fa-cubes" style="color: #FF6384;"></i> Materials</span>
+                                <span class="breakdown-value" id="materials-cost">₹0</span>
+                                <span class="breakdown-percent" id="materials-percent">0%</span>
+                            </div>
+                            <div class="breakdown-item">
+                                <span class="breakdown-label"><i class="fas fa-users" style="color: #36A2EB;"></i> Labor</span>
+                                <span class="breakdown-value" id="labor-cost">₹0</span>
+                                <span class="breakdown-percent" id="labor-percent">0%</span>
+                            </div>
+                            <div class="breakdown-item">
+                                <span class="breakdown-label"><i class="fas fa-truck" style="color: #FFCE56;"></i> Equipment</span>
+                                <span class="breakdown-value" id="equipment-cost">₹0</span>
+                                <span class="breakdown-percent" id="equipment-percent">0%</span>
+                            </div>
+                            <div class="breakdown-item">
+                                <span class="breakdown-label"><i class="fas fa-cog" style="color: #4BC0C0;"></i> Overhead</span>
+                                <span class="breakdown-value" id="overhead-cost">₹0</span>
+                                <span class="breakdown-percent" id="overhead-percent">0%</span>
+                            </div>
+                            <div class="breakdown-item">
+                                <span class="breakdown-label"><i class="fas fa-random" style="color: #9966FF;"></i> Contingency</span>
+                                <span class="breakdown-value" id="contingency-cost">₹0</span>
+                                <span class="breakdown-percent" id="contingency-percent">0%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Timeline Section -->
+                <div class="timeline-section">
+                    <h3><i class="fas fa-project-diagram"></i> Project Timeline Milestones</h3>
+                    <div class="timeline" id="project-timeline">
+                        <!-- Timeline will be populated dynamically -->
+                    </div>
+                </div>
+
+                <!-- Risk Factors Section -->
+                <div class="risk-factors-section">
+                    <h3><i class="fas fa-shield-alt"></i> Risk Analysis</h3>
+                    <div class="risk-analysis-grid">
+                        <div class="risk-chart-container">
+                            <canvas id="riskFactorsChart"></canvas>
+                        </div>
+                        <div id="risk-factors-list" class="risk-factors-list"></div>
+                    </div>
+                </div>
+
+                <!-- Recommendations Section -->
+                <div class="recommendations-section">
+                    <h3><i class="fas fa-lightbulb"></i> AI Recommendations</h3>
+                    <ul id="recommendations-list"></ul>
+                </div>
+
+                <!-- Resource Optimization Section -->
+                <div class="optimization-section">
+                    <h3><i class="fas fa-chart-line"></i> Resource Optimization Suggestions</h3>
+                    <div class="optimization-cards" id="optimization-cards">
+                        <!-- Will be populated dynamically -->
+                    </div>
+                </div>
+
+                <!-- AI Cost Optimizer Section -->
+                <div class="ai-optimizer-section" id="ai-optimizer-section">
+                    <div class="optimizer-header">
+                        <h3><i class="fas fa-magic"></i> AI Cost Optimizer</h3>
+                        <button class="btn btn-accent" id="run-optimizer-btn" onclick="runCostOptimizer()">
+                            <i class="fas fa-bolt"></i> Analyze & Optimize
+                        </button>
+                    </div>
+
+                    <div id="optimizer-loading" class="optimizer-loading hidden">
+                        <i class="fas fa-spinner fa-spin"></i>
+                        <span>Analyzing project for cost optimization opportunities...</span>
+                    </div>
+
+                    <div id="optimizer-results" class="optimizer-results hidden">
+                        <!-- Summary Card -->
+                        <div class="optimizer-summary">
+                            <div class="summary-item original">
+                                <span class="label">Current Estimate</span>
+                                <span class="value" id="optimizer-original-cost">Rs. 0</span>
+                            </div>
+                            <div class="summary-arrow">
+                                <i class="fas fa-arrow-right"></i>
+                            </div>
+                            <div class="summary-item optimized">
+                                <span class="label">Optimized Estimate</span>
+                                <span class="value" id="optimizer-optimized-cost">Rs. 0</span>
+                            </div>
+                            <div class="summary-item savings">
+                                <span class="label">Potential Savings</span>
+                                <span class="value" id="optimizer-total-savings">Rs. 0</span>
+                                <span class="percent" id="optimizer-savings-percent">(0%)</span>
+                            </div>
+                        </div>
+
+                        <!-- Summary Text -->
+                        <div class="optimizer-summary-text" id="optimizer-summary-text"></div>
+
+                        <!-- Optimization Suggestions -->
+                        <div class="optimizer-suggestions" id="optimizer-suggestions">
+                            <!-- Suggestions will be populated dynamically -->
+                        </div>
+
+                        <!-- Apply Actions -->
+                        <div class="optimizer-actions">
+                            <button class="btn btn-secondary" onclick="hideOptimizer()">
+                                <i class="fas fa-times"></i> Dismiss
+                            </button>
+                            <button class="btn btn-primary" onclick="applyOptimizations()">
+                                <i class="fas fa-check"></i> Apply Selected Optimizations
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Export Actions -->
+                <div class="export-actions">
+                    <button class="btn btn-secondary" onclick="exportToPDF()">
+                        <i class="fas fa-file-pdf"></i> Export PDF Report
+                    </button>
+                    <button class="btn btn-secondary" onclick="exportToExcel()">
+                        <i class="fas fa-file-excel"></i> Export to Excel
+                    </button>
+                    <button class="btn btn-secondary" onclick="printResult()">
+                        <i class="fas fa-print"></i> Print
+                    </button>
+                    <button class="btn btn-primary" onclick="saveAsProject()">
+                        <i class="fas fa-save"></i> Save as Project
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Projects Tab -->
+        <section id="projects" class="tab-content">
+            <div class="section-header">
+                <h2><i class="fas fa-folder-open"></i> Saved Projects</h2>
+                <button class="btn btn-primary" id="new-project-btn">
+                    <i class="fas fa-plus"></i> New Project
+                </button>
+            </div>
+
+            <div id="new-project-form" class="form-container hidden">
+                <h3>Create New Project</h3>
+                <form id="create-project-form">
+                    <div class="form-group">
+                        <label for="new_project_name">Project Name *</label>
+                        <input type="text" id="new_project_name" name="name" required>
+                    </div>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="new_project_type">Project Type *</label>
+                            <select id="new_project_type" name="project_type" required>
+                                <option value="residential">Residential</option>
+                                <option value="commercial" selected>Commercial</option>
+                                <option value="industrial">Industrial</option>
+                                <option value="infrastructure">Infrastructure</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="new_location">Location</label>
+                            <input type="text" id="new_location" name="location" placeholder="City, State">
+                        </div>
+                        <div class="form-group">
+                            <label for="new_total_area">Total Area (sq ft) *</label>
+                            <input type="number" id="new_total_area" name="total_area_sqft" required min="100">
+                        </div>
+                        <div class="form-group">
+                            <label for="new_workers">Number of Workers *</label>
+                            <input type="number" id="new_workers" name="num_workers" required min="1">
+                        </div>
+                        <div class="form-group">
+                            <label for="new_duration">Planned Duration (days) *</label>
+                            <input type="number" id="new_duration" name="planned_duration_days" required min="1">
+                        </div>
+                        <div class="form-group">
+                            <label for="new_budget">Estimated Budget (₹)</label>
+                            <input type="number" id="new_budget" name="estimated_budget" min="0">
+                        </div>
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">Create Project</button>
+                        <button type="button" class="btn btn-secondary" id="cancel-project-btn">Cancel</button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="project-filters">
+                <div class="filter-group">
+                    <label>Filter by Type:</label>
+                    <select id="project-type-filter">
+                        <option value="all">All Types</option>
+                        <option value="residential">Residential</option>
+                        <option value="commercial">Commercial</option>
+                        <option value="industrial">Industrial</option>
+                        <option value="infrastructure">Infrastructure</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>Sort by:</label>
+                    <select id="project-sort">
+                        <option value="newest">Newest First</option>
+                        <option value="oldest">Oldest First</option>
+                        <option value="name">Name (A-Z)</option>
+                        <option value="area">Area (Largest)</option>
+                    </select>
+                </div>
+            </div>
+
+            <div id="projects-list" class="projects-grid"></div>
+        </section>
+
+        <!-- History Tab -->
+        <section id="history" class="tab-content">
+            <div class="section-header">
+                <h2><i class="fas fa-history"></i> Prediction History</h2>
+                <div class="history-actions">
+                    <button class="btn btn-secondary" onclick="exportHistory()">
+                        <i class="fas fa-download"></i> Export History
+                    </button>
+                    <button class="btn btn-secondary" onclick="clearHistory()">
+                        <i class="fas fa-trash"></i> Clear History
+                    </button>
+                </div>
+            </div>
+
+            <div class="history-filters">
+                <div class="filter-group">
+                    <label>Date Range:</label>
+                    <input type="date" id="history-start-date">
+                    <span>to</span>
+                    <input type="date" id="history-end-date">
+                </div>
+                <div class="filter-group">
+                    <label>Project Type:</label>
+                    <select id="history-type-filter">
+                        <option value="all">All Types</option>
+                        <option value="residential">Residential</option>
+                        <option value="commercial">Commercial</option>
+                        <option value="industrial">Industrial</option>
+                        <option value="infrastructure">Infrastructure</option>
+                    </select>
+                </div>
+                <button class="btn btn-sm" onclick="applyHistoryFilters()">Apply Filters</button>
+            </div>
+
+            <div id="history-list" class="history-table-container">
+                <table class="history-table">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Project Type</th>
+                            <th>Area (sqft)</th>
+                            <th>Predicted Cost</th>
+                            <th>Cost/sqft</th>
+                            <th>Predicted Delay</th>
+                            <th>Risk Score</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="history-tbody"></tbody>
+                </table>
+            </div>
+
+            <div class="pagination" id="history-pagination">
+                <!-- Pagination will be added dynamically -->
+            </div>
+        </section>
+
+        <!-- Compare Tab -->
+        <section id="compare" class="tab-content">
+            <h2><i class="fas fa-balance-scale"></i> Compare Scenarios</h2>
+            <p class="section-desc">Compare different project configurations to find the optimal approach for your construction project.</p>
+
+            <div class="compare-actions">
+                <button class="btn btn-secondary" id="add-scenario-btn">
+                    <i class="fas fa-plus"></i> Add Scenario
+                </button>
+                <button class="btn btn-secondary" onclick="resetScenarios()">
+                    <i class="fas fa-redo"></i> Reset All
+                </button>
+            </div>
+
+            <div id="scenarios-container">
+                <div class="scenario-card" data-scenario="0">
+                    <div class="scenario-header">
+                        <h3><i class="fas fa-file-alt"></i> Scenario 1</h3>
+                        <input type="text" class="scenario-name" placeholder="Name this scenario" value="Base Plan">
+                    </div>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Project Type</label>
+                            <select name="project_type">
+                                <option value="residential">Residential</option>
+                                <option value="commercial" selected>Commercial</option>
+                                <option value="industrial">Industrial</option>
+                                <option value="infrastructure">Infrastructure</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Area (sqft)</label>
+                            <input type="number" name="total_area_sqft" value="10000" min="100">
+                        </div>
+                        <div class="form-group">
+                            <label>Workers</label>
+                            <input type="number" name="num_workers" value="20" min="1">
+                        </div>
+                        <div class="form-group">
+                            <label>Duration (days)</label>
+                            <input type="number" name="planned_duration_days" value="180" min="1">
+                        </div>
+                        <div class="form-group">
+                            <label>Complexity</label>
+                            <select name="complexity_level">
+                                <option value="low">Low</option>
+                                <option value="medium" selected>Medium</option>
+                                <option value="high">High</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Material Quality</label>
+                            <select name="material_quality">
+                                <option value="economy">Economy</option>
+                                <option value="standard" selected>Standard</option>
+                                <option value="premium">Premium</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="scenario-card" data-scenario="1">
+                    <div class="scenario-header">
+                        <h3><i class="fas fa-file-alt"></i> Scenario 2</h3>
+                        <input type="text" class="scenario-name" placeholder="Name this scenario" value="Premium Option">
+                        <button class="remove-scenario-btn" onclick="removeScenario(1)"><i class="fas fa-times"></i></button>
+                    </div>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Project Type</label>
+                            <select name="project_type">
+                                <option value="residential">Residential</option>
+                                <option value="commercial" selected>Commercial</option>
+                                <option value="industrial">Industrial</option>
+                                <option value="infrastructure">Infrastructure</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Area (sqft)</label>
+                            <input type="number" name="total_area_sqft" value="10000" min="100">
+                        </div>
+                        <div class="form-group">
+                            <label>Workers</label>
+                            <input type="number" name="num_workers" value="30" min="1">
+                        </div>
+                        <div class="form-group">
+                            <label>Duration (days)</label>
+                            <input type="number" name="planned_duration_days" value="150" min="1">
+                        </div>
+                        <div class="form-group">
+                            <label>Complexity</label>
+                            <select name="complexity_level">
+                                <option value="low">Low</option>
+                                <option value="medium" selected>Medium</option>
+                                <option value="high">High</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Material Quality</label>
+                            <select name="material_quality">
+                                <option value="economy">Economy</option>
+                                <option value="standard">Standard</option>
+                                <option value="premium" selected>Premium</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <button class="btn btn-primary btn-lg" id="compare-btn">
+                <i class="fas fa-chart-bar"></i> Compare Scenarios
+            </button>
+
+            <div id="comparison-result" class="hidden">
+                <h3><i class="fas fa-trophy"></i> Comparison Results</h3>
+
+                <div id="comparison-summary" class="comparison-summary"></div>
+
+                <div class="comparison-charts">
+                    <div class="comparison-chart-container">
+                        <canvas id="comparisonCostChart"></canvas>
+                    </div>
+                    <div class="comparison-chart-container">
+                        <canvas id="comparisonRiskChart"></canvas>
+                    </div>
+                </div>
+
+                <div id="comparison-details" class="comparison-details"></div>
+
+                <div class="comparison-recommendation">
+                    <h4><i class="fas fa-star"></i> AI Recommendation</h4>
+                    <p id="comparison-ai-recommendation"></p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Analytics Tab -->
+        <section id="analytics" class="tab-content">
+            <h2><i class="fas fa-chart-pie"></i> Analytics Dashboard</h2>
+
+            <div class="analytics-grid">
+                <div class="analytics-card">
+                    <h3><i class="fas fa-money-bill-trend-up"></i> Cost Analysis by Project Type</h3>
+                    <div class="chart-container">
+                        <canvas id="costByTypeChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="analytics-card">
+                    <h3><i class="fas fa-clock"></i> Delay Patterns</h3>
+                    <div class="chart-container">
+                        <canvas id="delayPatternsChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="analytics-card">
+                    <h3><i class="fas fa-chart-area"></i> Cost Distribution</h3>
+                    <div class="chart-container">
+                        <canvas id="costDistributionChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="analytics-card">
+                    <h3><i class="fas fa-bullseye"></i> Risk Score Trends</h3>
+                    <div class="chart-container">
+                        <canvas id="riskTrendsChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="analytics-card wide">
+                    <h3><i class="fas fa-table"></i> Key Metrics Summary</h3>
+                    <div class="metrics-summary" id="metrics-summary">
+                        <div class="metric-item">
+                            <span class="metric-label">Average Cost per sqft</span>
+                            <span class="metric-value" id="avg-cost-sqft">₹0</span>
+                        </div>
+                        <div class="metric-item">
+                            <span class="metric-label">Average Delay</span>
+                            <span class="metric-value" id="avg-delay">0 days</span>
+                        </div>
+                        <div class="metric-item">
+                            <span class="metric-label">High Risk Projects</span>
+                            <span class="metric-value" id="high-risk-count">0</span>
+                        </div>
+                        <div class="metric-item">
+                            <span class="metric-label">Most Common Type</span>
+                            <span class="metric-value" id="common-type">-</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <footer class="govt-footer">
+        <p><i class="fas fa-landmark"></i> Government Construction Cost & Delay Prediction System</p>
+        <p class="footer-note">For Government Contractors | Predictions are estimates for tendering purposes only</p>
+        <p class="footer-disclaimer">This tool is meant for estimation purposes. Actual costs may vary based on site conditions and government rates.</p>
+    </footer>
+
+    <!-- PDF Branding Modal -->
+    <div id="pdf-branding-modal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-file-pdf"></i> Export PDF Report</h3>
+                <button class="close-modal" onclick="closePdfBrandingModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p class="modal-description">Customize your PDF report with your company branding (optional).</p>
+                <div class="form-group">
+                    <label for="pdf-company-name"><i class="fas fa-building"></i> Company Name</label>
+                    <input type="text" id="pdf-company-name" placeholder="Enter your company name" maxlength="100">
+                </div>
+                <div class="form-group">
+                    <label for="pdf-contact-info"><i class="fas fa-address-card"></i> Contact Information</label>
+                    <input type="text" id="pdf-contact-info" placeholder="Phone, Email, Address" maxlength="200">
+                </div>
+                <div class="pdf-preview-info">
+                    <i class="fas fa-info-circle"></i>
+                    <span>The PDF will include project details, cost breakdown chart, timeline analysis, risk assessment, and recommendations.</span>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closePdfBrandingModal()">Cancel</button>
+                <button class="btn btn-primary" id="pdf-generate-btn" onclick="generatePdfReport()">
+                    <i class="fas fa-file-pdf"></i> Generate PDF
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>
