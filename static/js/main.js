@@ -771,12 +771,13 @@ function displayBOQResult(result) {
     boqSection.classList.remove('hidden');
     if (mlResultsGrid) mlResultsGrid.style.display = 'none';
 
-    // Hide other ML-specific sections
-    document.querySelector('.breakdown-section')?.classList.add('hidden');
-    document.querySelector('.timeline-section')?.classList.add('hidden');
-    document.querySelector('.risk-factors-section')?.classList.add('hidden');
-    document.querySelector('.recommendations-section')?.classList.add('hidden');
-    document.querySelector('.optimization-section')?.classList.add('hidden');
+    // Hide ALL ML-specific sections (prevent confusion with BOQ results)
+    document.querySelector('.breakdown-section')?.setAttribute('style', 'display:none');
+    document.querySelector('.timeline-section')?.setAttribute('style', 'display:none');
+    document.querySelector('.risk-factors-section')?.setAttribute('style', 'display:none');
+    document.querySelector('.recommendations-section')?.setAttribute('style', 'display:none');
+    document.querySelector('.optimization-section')?.setAttribute('style', 'display:none');
+    document.getElementById('ai-optimizer-section')?.setAttribute('style', 'display:none');
 
     // Display project header
     const projectHeader = document.getElementById('result-project-name');
@@ -989,6 +990,17 @@ function displayProfitAnalysis(result) {
 function displayPredictionResult(result) {
     const resultContainer = document.getElementById('prediction-result');
     resultContainer.classList.remove('hidden');
+
+    // Show ML sections, hide BOQ section
+    const mlResultsGrid = document.getElementById('ml-results-grid');
+    if (mlResultsGrid) mlResultsGrid.style.display = '';
+    document.getElementById('boq-section')?.classList.add('hidden');
+    document.querySelector('.breakdown-section')?.removeAttribute('style');
+    document.querySelector('.timeline-section')?.removeAttribute('style');
+    document.querySelector('.risk-factors-section')?.removeAttribute('style');
+    document.querySelector('.recommendations-section')?.removeAttribute('style');
+    document.querySelector('.optimization-section')?.removeAttribute('style');
+    document.getElementById('ai-optimizer-section')?.removeAttribute('style');
 
     // Display work name prominently (for government contractors)
     const projectHeader = document.getElementById('result-project-name');
