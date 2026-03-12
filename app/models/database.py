@@ -1,5 +1,69 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 from app import db
+
+
+class PriceReport(db.Model):
+    """Crowdsourced price reports from users"""
+    __tablename__ = 'price_reports'
+
+    id = db.Column(db.Integer, primary_key=True)
+    material_name = db.Column(db.String(100), nullable=False)
+    material_category = db.Column(db.String(50), nullable=False)  # cement, steel, sand, bricks, etc.
+    price = db.Column(db.Float, nullable=False)
+    unit = db.Column(db.String(30), nullable=False)  # per bag, per kg, per cum, etc.
+    city = db.Column(db.String(100), nullable=False)
+    region = db.Column(db.String(50), nullable=False)
+    brand = db.Column(db.String(100), nullable=True)
+    reporter_name = db.Column(db.String(100), nullable=True)
+    reporter_type = db.Column(db.String(50), nullable=True)  # contractor, dealer, engineer, homeowner
+    notes = db.Column(db.String(500), nullable=True)
+    verified = db.Column(db.Boolean, default=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'material_name': self.material_name,
+            'material_category': self.material_category,
+            'price': self.price,
+            'unit': self.unit,
+            'city': self.city,
+            'region': self.region,
+            'brand': self.brand,
+            'reporter_name': self.reporter_name,
+            'reporter_type': self.reporter_type,
+            'notes': self.notes,
+            'verified': self.verified,
+            'created_at': self.created_at.isoformat() if self.created_at else None,
+        }
+
+    @staticmethod
+    def get_avg_price(material_category, city=None, region=None, days=30):
+        """Get average price for a material in a city/region over last N days"""
+        cutoff = datetime.utcnow() - timedelta(days=days)
+        query = PriceReport.query.filter(
+            PriceReport.material_category == material_category,
+            PriceReport.created_at >= cutoff
+        )
+        if city:
+            query = query.filter(PriceReport.city == city)
+        elif region:
+            query = query.filter(PriceReport.region == region)
+
+        reports = query.all()
+        if not reports:
+            return None
+
+        avg_price = sum(r.price for r in reports) / len(reports)
+        return {
+            'avg_price': round(avg_price, 2),
+            'min_price': min(r.price for r in reports),
+            'max_price': max(r.price for r in reports),
+            'report_count': len(reports),
+            'latest_report': max(r.created_at for r in reports).isoformat(),
+            'city': city,
+            'region': region,
+        }
 
 
 class Project(db.Model):

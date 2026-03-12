@@ -2875,6 +2875,151 @@ async function saveNewRate() {
     }
 }
 
+// =====================================================
+// CROWDSOURCED PRICE REPORTING
+// =====================================================
+
+function openReportPriceModal() {
+    const modal = document.getElementById('report-price-modal');
+    if (modal) {
+        modal.style.display = 'flex';
+        document.getElementById('report-price-form').style.display = 'block';
+        document.getElementById('rp-success-msg').style.display = 'none';
+        document.getElementById('report-price-form').reset();
+    }
+}
+
+function closeReportPriceModal() {
+    const modal = document.getElementById('report-price-modal');
+    if (modal) {
+        modal.style.display = 'none';
+    }
+}
+
+async function submitPriceReport(event) {
+    event.preventDefault();
+    const btn = document.getElementById('rp-submit-btn');
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Submitting...';
+
+    const data = {
+        material_category: document.getElementById('rp-category').value,
+        material_name: document.getElementById('rp-name').value,
+        price: parseFloat(document.getElementById('rp-price').value),
+        city: document.getElementById('rp-city').value,
+        brand: document.getElementById('rp-brand').value,
+        reporter_type: document.getElementById('rp-reporter-type').value,
+        reporter_name: document.getElementById('rp-reporter-name').value,
+        notes: document.getElementById('rp-notes').value,
+    };
+
+    try {
+        const response = await fetch(`${API_BASE}/rates/crowdsourced/report`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+        });
+        const result = await response.json();
+
+        if (result.success) {
+            document.getElementById('report-price-form').style.display = 'none';
+            document.getElementById('rp-success-msg').style.display = 'block';
+            loadCrowdsourcedPrices();
+        } else {
+            alert('Error: ' + (result.error || 'Failed to submit'));
+        }
+    } catch (error) {
+        alert('Network error. Please try again.');
+    } finally {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-paper-plane"></i> Submit Price Report';
+    }
+}
+
+async function loadCrowdsourcedPrices() {
+    try {
+        const [pricesRes, recentRes, statsRes] = await Promise.all([
+            fetch(`${API_BASE}/rates/crowdsourced/prices`),
+            fetch(`${API_BASE}/rates/crowdsourced/recent?limit=10`),
+            fetch(`${API_BASE}/rates/crowdsourced/stats`)
+        ]);
+
+        const pricesData = await pricesRes.json();
+        const recentData = await recentRes.json();
+        const statsData = await statsRes.json();
+
+        // Update total reports badge
+        const totalBadge = document.getElementById('crowd-total-reports');
+        if (totalBadge && statsData.success) {
+            totalBadge.textContent = `${statsData.total_reports} reports | ${statsData.cities_covered} cities`;
+        }
+
+        // Update prices grid
+        const grid = document.getElementById('crowdsourced-prices-grid');
+        if (grid && pricesData.success && pricesData.materials.length > 0) {
+            grid.innerHTML = pricesData.materials.map(m => `
+                <div style="background:white; border-radius:10px; padding:14px; border:1px solid #e0e0e0; box-shadow:0 2px 4px rgba(0,0,0,0.05);">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                        <strong style="color:#333; text-transform:capitalize;">${m.material_category}</strong>
+                        <span style="font-size:12px; background:#e8f5e9; color:#2e7d32; padding:2px 8px; border-radius:10px;">${m.report_count} reports</span>
+                    </div>
+                    <div style="font-size:22px; font-weight:700; color:#155724;">Rs. ${m.avg_price.toLocaleString()}</div>
+                    <div style="font-size:12px; color:#888; margin-top:2px;">${m.unit}</div>
+                    <div style="font-size:12px; color:#666; margin-top:6px;">
+                        Range: Rs.${m.min_price.toLocaleString()} - Rs.${m.max_price.toLocaleString()}
+                    </div>
+                    <div style="font-size:11px; color:#999; margin-top:4px;">
+                        Cities: ${m.cities_covered.slice(0, 3).join(', ')}${m.cities_covered.length > 3 ? '...' : ''}
+                    </div>
+                </div>
+            `).join('');
+        } else if (grid) {
+            grid.innerHTML = '<div style="text-align:center; padding:20px; color:#666; grid-column:1/-1;"><i class="fas fa-info-circle"></i> No community reports yet. Be the first to report local prices!</div>';
+        }
+
+        // Update recent reports
+        const recentList = document.getElementById('recent-reports-list');
+        if (recentList && recentData.success && recentData.reports.length > 0) {
+            recentList.innerHTML = recentData.reports.map(r => {
+                const date = new Date(r.created_at);
+                const timeAgo = getTimeAgo(date);
+                return `
+                    <div style="display:flex; justify-content:space-between; align-items:center; padding:8px 12px; border-bottom:1px solid #eee; font-size:13px;">
+                        <div>
+                            <strong>${r.material_name}</strong>
+                            <span style="color:#666;"> - ${r.city}</span>
+                            ${r.brand ? `<span style="color:#999;"> (${r.brand})</span>` : ''}
+                        </div>
+                        <div style="text-align:right;">
+                            <strong style="color:#155724;">Rs. ${r.price.toLocaleString()}</strong>
+                            <div style="font-size:11px; color:#999;">${timeAgo}</div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        } else if (recentList) {
+            recentList.innerHTML = '<div style="text-align:center; padding:16px; color:#999; font-size:13px;">No reports yet</div>';
+        }
+
+    } catch (error) {
+        console.error('Error loading crowdsourced prices:', error);
+    }
+}
+
+function getTimeAgo(date) {
+    const now = new Date();
+    const diffMs = now - date;
+    const diffMins = Math.floor(diffMs / 60000);
+    const diffHours = Math.floor(diffMs / 3600000);
+    const diffDays = Math.floor(diffMs / 86400000);
+
+    if (diffMins < 1) return 'Just now';
+    if (diffMins < 60) return `${diffMins}m ago`;
+    if (diffHours < 24) return `${diffHours}h ago`;
+    if (diffDays < 7) return `${diffDays}d ago`;
+    return date.toLocaleDateString();
+}
+
 // Initialize
 document.addEventListener('DOMContentLoaded', () => {
     // Load dashboard on start
@@ -2884,7 +3029,18 @@ document.addEventListener('DOMContentLoaded', () => {
     const ratesTab = document.querySelector('[data-tab="live-rates"]');
     if (ratesTab) {
         ratesTab.addEventListener('click', () => {
-            setTimeout(loadRatesForRegion, 100);
+            setTimeout(() => {
+                loadRatesForRegion();
+                loadCrowdsourcedPrices();
+            }, 100);
+        });
+    }
+
+    // Close modal on outside click
+    const modal = document.getElementById('report-price-modal');
+    if (modal) {
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) closeReportPriceModal();
         });
     }
 });

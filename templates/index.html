@@ -195,6 +195,9 @@
                                 <option value="northeast">North East India</option>
                             </select>
                         </div>
+                        <button class="btn btn-primary" onclick="openReportPriceModal()" style="background:#28a745; border:none; color:white; padding:8px 16px; border-radius:6px; cursor:pointer; font-size:14px;">
+                            <i class="fas fa-plus-circle"></i> Report Local Price
+                        </button>
                         <button class="btn btn-refresh" id="refresh-rates-btn" onclick="refreshLivePrices()">
                             <i class="fas fa-sync-alt"></i> Refresh
                         </button>
@@ -339,6 +342,110 @@
                         </div>
                         <div class="rate-card-footer">
                             <small>Helper: Rs.600 | Unskilled: Rs.550</small>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Crowdsourced Prices Section -->
+                <div class="crowdsourced-section" style="margin-bottom:24px; background:#f0f9f0; border-radius:12px; padding:20px; border:1px solid #28a745;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+                        <h3 style="margin:0; color:#155724;">
+                            <i class="fas fa-users"></i> Community Reported Prices
+                            <span id="crowd-total-reports" style="font-size:13px; background:#28a745; color:white; padding:2px 10px; border-radius:12px; margin-left:8px;">0 reports</span>
+                        </h3>
+                        <button onclick="loadCrowdsourcedPrices()" style="background:none; border:1px solid #28a745; color:#28a745; padding:6px 12px; border-radius:6px; cursor:pointer; font-size:13px;">
+                            <i class="fas fa-sync-alt"></i> Refresh
+                        </button>
+                    </div>
+                    <div id="crowdsourced-prices-grid" style="display:grid; grid-template-columns:repeat(auto-fill, minmax(280px, 1fr)); gap:12px;">
+                        <div style="text-align:center; padding:20px; color:#666;">
+                            <i class="fas fa-info-circle"></i> No community reports yet. Be the first to report local prices!
+                        </div>
+                    </div>
+                    <div id="recent-reports-section" style="margin-top:16px;">
+                        <h4 style="color:#155724; margin-bottom:10px;"><i class="fas fa-clock"></i> Recent Reports</h4>
+                        <div id="recent-reports-list" style="max-height:200px; overflow-y:auto;">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Report Price Modal -->
+                <div id="report-price-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:1000; justify-content:center; align-items:center;">
+                    <div style="background:white; border-radius:16px; padding:30px; max-width:500px; width:90%; max-height:90vh; overflow-y:auto; position:relative;">
+                        <button onclick="closeReportPriceModal()" style="position:absolute; top:15px; right:15px; background:none; border:none; font-size:20px; cursor:pointer; color:#666;">&times;</button>
+                        <h3 style="margin-top:0; color:#155724;"><i class="fas fa-plus-circle"></i> Report Local Material Price</h3>
+                        <p style="color:#666; font-size:14px;">Help the community by sharing current prices in your area.</p>
+
+                        <form id="report-price-form" onsubmit="submitPriceReport(event)">
+                            <div style="margin-bottom:14px;">
+                                <label style="display:block; font-weight:600; margin-bottom:4px;">Material Category *</label>
+                                <select id="rp-category" required style="width:100%; padding:10px; border:1px solid #ddd; border-radius:8px; font-size:14px;">
+                                    <option value="">Select category</option>
+                                    <option value="cement">Cement</option>
+                                    <option value="steel">Steel / TMT</option>
+                                    <option value="sand">Sand</option>
+                                    <option value="aggregate">Aggregate / Gravel</option>
+                                    <option value="bricks">Bricks / Blocks</option>
+                                    <option value="wood">Wood / Timber</option>
+                                    <option value="paint">Paint</option>
+                                    <option value="tiles">Tiles / Flooring</option>
+                                    <option value="pipes">Pipes / Plumbing</option>
+                                    <option value="electrical">Electrical</option>
+                                </select>
+                            </div>
+
+                            <div style="margin-bottom:14px;">
+                                <label style="display:block; font-weight:600; margin-bottom:4px;">Material Name *</label>
+                                <input type="text" id="rp-name" required placeholder="e.g., Cement OPC 43, TMT Fe500 12mm" style="width:100%; padding:10px; border:1px solid #ddd; border-radius:8px; font-size:14px; box-sizing:border-box;">
+                            </div>
+
+                            <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:14px;">
+                                <div>
+                                    <label style="display:block; font-weight:600; margin-bottom:4px;">Price (Rs.) *</label>
+                                    <input type="number" id="rp-price" required min="1" step="0.01" placeholder="e.g., 420" style="width:100%; padding:10px; border:1px solid #ddd; border-radius:8px; font-size:14px; box-sizing:border-box;">
+                                </div>
+                                <div>
+                                    <label style="display:block; font-weight:600; margin-bottom:4px;">City *</label>
+                                    <input type="text" id="rp-city" required placeholder="e.g., Chennai" style="width:100%; padding:10px; border:1px solid #ddd; border-radius:8px; font-size:14px; box-sizing:border-box;">
+                                </div>
+                            </div>
+
+                            <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:14px;">
+                                <div>
+                                    <label style="display:block; font-weight:600; margin-bottom:4px;">Brand (optional)</label>
+                                    <input type="text" id="rp-brand" placeholder="e.g., UltraTech, TATA" style="width:100%; padding:10px; border:1px solid #ddd; border-radius:8px; font-size:14px; box-sizing:border-box;">
+                                </div>
+                                <div>
+                                    <label style="display:block; font-weight:600; margin-bottom:4px;">You are a</label>
+                                    <select id="rp-reporter-type" style="width:100%; padding:10px; border:1px solid #ddd; border-radius:8px; font-size:14px;">
+                                        <option value="contractor">Contractor</option>
+                                        <option value="dealer">Material Dealer</option>
+                                        <option value="engineer">Civil Engineer</option>
+                                        <option value="homeowner">Home Owner</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div style="margin-bottom:14px;">
+                                <label style="display:block; font-weight:600; margin-bottom:4px;">Your Name (optional)</label>
+                                <input type="text" id="rp-reporter-name" placeholder="e.g., Ravi Kumar" style="width:100%; padding:10px; border:1px solid #ddd; border-radius:8px; font-size:14px; box-sizing:border-box;">
+                            </div>
+
+                            <div style="margin-bottom:18px;">
+                                <label style="display:block; font-weight:600; margin-bottom:4px;">Notes (optional)</label>
+                                <input type="text" id="rp-notes" placeholder="e.g., Price at local dealer, wholesale rate" style="width:100%; padding:10px; border:1px solid #ddd; border-radius:8px; font-size:14px; box-sizing:border-box;">
+                            </div>
+
+                            <button type="submit" id="rp-submit-btn" style="width:100%; padding:12px; background:#28a745; color:white; border:none; border-radius:8px; font-size:16px; font-weight:600; cursor:pointer;">
+                                <i class="fas fa-paper-plane"></i> Submit Price Report
+                            </button>
+                        </form>
+
+                        <div id="rp-success-msg" style="display:none; text-align:center; padding:20px;">
+                            <i class="fas fa-check-circle" style="font-size:48px; color:#28a745;"></i>
+                            <h4 style="color:#155724;">Thank you!</h4>
+                            <p style="color:#666;">Your price report has been submitted. This helps everyone get accurate local rates.</p>
+                            <button onclick="closeReportPriceModal()" style="padding:10px 24px; background:#28a745; color:white; border:none; border-radius:8px; cursor:pointer; font-size:14px;">Close</button>
                         </div>
                     </div>
                 </div>

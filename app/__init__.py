@@ -16,7 +16,7 @@ def create_app(config_class=Config):
                 static_folder=os.path.join(BASE_DIR, 'static'))
     app.config.from_object(config_class)
 
-    CORS(app)
+    CORS(app, resources={r"/api/*": {"origins": os.environ.get("ALLOWED_ORIGINS", "*")}})
     db.init_app(app)
 
     from app.routes import predictions, projects, rates
