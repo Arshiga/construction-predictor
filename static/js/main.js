@@ -575,12 +575,24 @@ function toggleInfrastructureSection() {
 
     // Check if it's an infrastructure project
     const isInfra = projectType === 'infrastructure' ||
-        ['road', 'highway', 'drain', 'nala', 'culvert', 'bridge', 'pavement', 'street', 'path'].some(kw => combinedName.includes(kw));
+        ['road', 'highway', 'drain', 'nala', 'culvert', 'bridge', 'pavement', 'street', 'path', 'drainage', 'sewage', 'sewer'].some(kw => combinedName.includes(kw));
 
     if (isInfra && infraSection) {
         infraSection.style.display = 'block';
         if (buildingFeatures) buildingFeatures.style.display = 'none';
         if (areaGroup) areaGroup.style.display = 'none';
+
+        // Auto-select work type based on keywords
+        const workTypeSelect = document.getElementById('work_type');
+        if (workTypeSelect) {
+            if (['drain', 'nala', 'drainage', 'sewage', 'sewer'].some(kw => combinedName.includes(kw))) {
+                workTypeSelect.value = 'drain';
+                toggleInfraFields();
+            } else if (['culvert', 'bridge'].some(kw => combinedName.includes(kw))) {
+                workTypeSelect.value = 'culvert';
+                toggleInfraFields();
+            }
+        }
     } else {
         if (infraSection) infraSection.style.display = 'none';
         if (buildingFeatures) buildingFeatures.style.display = 'block';
@@ -608,6 +620,7 @@ function toggleInfraFields() {
 // Add event listeners for infrastructure toggle
 document.getElementById('project_type')?.addEventListener('change', toggleInfrastructureSection);
 document.getElementById('work_name')?.addEventListener('input', toggleInfrastructureSection);
+document.getElementById('project_name')?.addEventListener('input', toggleInfrastructureSection);
 document.getElementById('work_type')?.addEventListener('change', toggleInfraFields);
 
 // Estimation type toggle
@@ -676,8 +689,20 @@ if (predictionForm) {
             has_fire_system: document.getElementById('has_fire_system')?.checked || false,
             has_smart_systems: document.getElementById('has_smart_systems')?.checked || false,
             requires_demolition: document.getElementById('requires_demolition')?.checked || false,
-            // Infrastructure fields
-            work_type: formData.get('work_type') || 'building',
+            // Infrastructure fields - auto-detect from work name if not explicitly set
+            work_type: (function() {
+                const wt = formData.get('work_type');
+                const wn = (workName + ' ' + (formData.get('project_name') || '')).toLowerCase();
+                // If infra section is visible, use the dropdown value
+                if (document.getElementById('infrastructure-section')?.style.display === 'block') {
+                    return wt || 'road';
+                }
+                // Auto-detect from work name keywords
+                if (['drain', 'nala', 'sewage', 'drainage', 'sewer', 'culvert'].some(k => wn.includes(k))) return 'drain';
+                if (['road', 'highway', 'street', 'lane', 'path', 'pavement'].some(k => wn.includes(k))) return 'road';
+                if (['bridge', 'flyover', 'overpass'].some(k => wn.includes(k))) return 'bridge';
+                return 'building';
+            })(),
             road_length_m: parseFloat(formData.get('road_length_m')) || 500,
             road_width_m: parseFloat(formData.get('road_width_m')) || 5,
             road_type: formData.get('road_type') || 'bituminous',
