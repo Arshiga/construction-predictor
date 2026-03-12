@@ -57,6 +57,17 @@ def make_prediction():
     data.setdefault('has_basement', False)
     data.setdefault('weather_risk_zone', 'moderate')
     data.setdefault('contractor_experience_years', 5)
+    # New detailed fields
+    data.setdefault('soil_type', 'normal')
+    data.setdefault('water_table_level', 'deep')
+    data.setdefault('distance_from_city_km', 5)
+    data.setdefault('site_accessibility', 'easy')
+    data.setdefault('floor_height_ft', 10)
+    data.setdefault('foundation_type', 'isolated')
+    data.setdefault('num_bathrooms', 2)
+    data.setdefault('electrical_load_kw', 10)
+    data.setdefault('finishing_level', 'standard')
+    data.setdefault('site_topography', 'flat')
 
     # Make prediction
     result = predictor.predict(data)

@@ -28,9 +28,13 @@ MODEL_DIR = 'trained_models'
 
 # Feature definitions
 CATEGORICAL_FEATURES = ['project_type', 'location', 'material_quality',
-                       'complexity_level', 'weather_risk_zone']
+                       'complexity_level', 'weather_risk_zone',
+                       'soil_type', 'water_table_level', 'site_accessibility',
+                       'foundation_type', 'finishing_level', 'site_topography']
 NUMERICAL_FEATURES = ['total_area_sqft', 'num_floors', 'num_workers',
-                     'planned_duration_days', 'contractor_experience_years']
+                     'planned_duration_days', 'contractor_experience_years',
+                     'distance_from_city_km', 'floor_height_ft',
+                     'num_bathrooms', 'electrical_load_kw']
 BOOLEAN_FEATURES = ['has_basement']
 
 

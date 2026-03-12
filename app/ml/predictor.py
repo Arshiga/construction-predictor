@@ -12,9 +12,13 @@ class CostDelayPredictor:
 
     # Feature columns used for prediction
     CATEGORICAL_FEATURES = ['project_type', 'location', 'material_quality',
-                           'complexity_level', 'weather_risk_zone']
+                           'complexity_level', 'weather_risk_zone',
+                           'soil_type', 'water_table_level', 'site_accessibility',
+                           'foundation_type', 'finishing_level', 'site_topography']
     NUMERICAL_FEATURES = ['total_area_sqft', 'num_floors', 'num_workers',
-                         'planned_duration_days', 'contractor_experience_years']
+                         'planned_duration_days', 'contractor_experience_years',
+                         'distance_from_city_km', 'floor_height_ft',
+                         'num_bathrooms', 'electrical_load_kw']
     BOOLEAN_FEATURES = ['has_basement']
 
     def __init__(self, model_dir='trained_models'):
@@ -167,6 +171,16 @@ class CostDelayPredictor:
         planned_duration = data.get('planned_duration_days', 180)
         num_workers = data.get('num_workers', 20)
         experience = data.get('contractor_experience_years', 5)
+        soil_type = data.get('soil_type', 'normal')
+        water_table = data.get('water_table_level', 'deep')
+        distance_km = data.get('distance_from_city_km', 5)
+        road_access = data.get('site_accessibility', 'easy')
+        floor_height = data.get('floor_height_ft', 10)
+        foundation_type = data.get('foundation_type', 'isolated')
+        num_bathrooms = data.get('num_bathrooms', 2)
+        electrical_load = data.get('electrical_load_kw', 10)
+        finishing_level = data.get('finishing_level', 'standard')
+        topography = data.get('site_topography', 'flat')
 
         # Calculate base cost
         base_cost_sqft = base_costs.get(project_type, 175)
@@ -179,6 +193,55 @@ class CostDelayPredictor:
 
         if has_basement:
             base_cost *= 1.15  # 15% increase for basement
+
+        # Soil type impact on excavation cost
+        soil_multipliers = {'normal': 1.0, 'rocky': 1.25, 'sandy': 1.05, 'clay': 1.10, 'marshy': 1.30}
+        base_cost *= soil_multipliers.get(soil_type, 1.0)
+
+        # Water table impact (dewatering costs)
+        water_multipliers = {'deep': 1.0, 'moderate': 1.05, 'shallow': 1.12, 'high': 1.20}
+        base_cost *= water_multipliers.get(water_table, 1.0)
+
+        # Distance from city (transport costs)
+        if distance_km > 50:
+            base_cost *= 1.15
+        elif distance_km > 20:
+            base_cost *= 1.08
+        elif distance_km > 10:
+            base_cost *= 1.04
+
+        # Road access impact
+        access_multipliers = {'easy': 1.0, 'moderate': 1.05, 'difficult': 1.15, 'remote': 1.25}
+        base_cost *= access_multipliers.get(road_access, 1.0)
+
+        # Floor height impact (scaffolding costs)
+        if floor_height > 14:
+            base_cost *= 1.12
+        elif floor_height > 12:
+            base_cost *= 1.06
+
+        # Foundation type impact
+        foundation_multipliers = {'isolated': 1.0, 'strip': 1.08, 'raft': 1.18, 'pile': 1.40}
+        base_cost *= foundation_multipliers.get(foundation_type, 1.0)
+
+        # Bathroom cost (plumbing fixtures)
+        base_cost += num_bathrooms * 75000  # ~Rs.75K per bathroom
+
+        # Electrical load impact
+        if electrical_load > 100:
+            base_cost += electrical_load * 800
+        elif electrical_load > 50:
+            base_cost += electrical_load * 500
+        else:
+            base_cost += electrical_load * 300
+
+        # Finishing level impact
+        finishing_multipliers = {'basic': 0.85, 'standard': 1.0, 'premium': 1.35, 'luxury': 1.80}
+        base_cost *= finishing_multipliers.get(finishing_level, 1.0)
+
+        # Topography impact
+        topo_multipliers = {'flat': 1.0, 'gentle_slope': 1.08, 'steep_slope': 1.20, 'hilly': 1.30}
+        base_cost *= topo_multipliers.get(topography, 1.0)
 
         # Calculate delay prediction
         base_delay = 0
@@ -205,6 +268,23 @@ class CostDelayPredictor:
         if num_workers < optimal_workers * 0.7:
             base_delay += 10
             delay_probability += 0.1
+
+        # Soil and topography delays
+        if soil_type in ('rocky', 'marshy'):
+            base_delay += 8
+            delay_probability += 0.08
+        if topography in ('steep_slope', 'hilly'):
+            base_delay += 10
+            delay_probability += 0.10
+        if water_table in ('shallow', 'high'):
+            base_delay += 5
+            delay_probability += 0.05
+        if road_access in ('difficult', 'remote'):
+            base_delay += 7
+            delay_probability += 0.07
+        if foundation_type == 'pile':
+            base_delay += 12
+            delay_probability += 0.08
 
         delay_probability = min(0.95, max(0.05, delay_probability))
 

@@ -703,12 +703,78 @@
                             </div>
 
                             <div class="form-group">
-                                <label for="site_accessibility">Site Accessibility</label>
+                                <label for="site_accessibility">Site Accessibility / Road Access</label>
                                 <select id="site_accessibility" name="site_accessibility">
-                                    <option value="easy" selected>Easy Access</option>
-                                    <option value="moderate">Moderate</option>
-                                    <option value="difficult">Difficult</option>
-                                    <option value="remote">Remote Location</option>
+                                    <option value="easy" selected>Easy (Wide road, crane accessible)</option>
+                                    <option value="moderate">Moderate (Standard road)</option>
+                                    <option value="difficult">Difficult (Narrow road, manual labor)</option>
+                                    <option value="remote">Remote Location (No proper road)</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="water_table_level">Water Table Level</label>
+                                <select id="water_table_level" name="water_table_level">
+                                    <option value="deep" selected>Deep (>10m) - No issue</option>
+                                    <option value="moderate">Moderate (5-10m)</option>
+                                    <option value="shallow">Shallow (2-5m) - Dewatering needed</option>
+                                    <option value="high">High (<2m) - Major dewatering</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="site_topography">Site Topography</label>
+                                <select id="site_topography" name="site_topography">
+                                    <option value="flat" selected>Flat Land</option>
+                                    <option value="gentle_slope">Gentle Slope</option>
+                                    <option value="steep_slope">Steep Slope (Retaining walls needed)</option>
+                                    <option value="hilly">Hilly Terrain</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="foundation_type">Foundation Type</label>
+                                <select id="foundation_type" name="foundation_type">
+                                    <option value="isolated" selected>Isolated Footing</option>
+                                    <option value="strip">Strip Foundation</option>
+                                    <option value="raft">Raft Foundation</option>
+                                    <option value="pile">Pile Foundation (Deep)</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="distance_from_city_km">Distance from City (km)</label>
+                                <input type="number" id="distance_from_city_km" name="distance_from_city_km" min="0" max="200" value="5" step="1">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Building Specifications Section -->
+                    <div class="form-section" id="building-specs-section">
+                        <h3 class="section-title"><i class="fas fa-building"></i> Building Specifications</h3>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="floor_height_ft">Floor Height (feet)</label>
+                                <input type="number" id="floor_height_ft" name="floor_height_ft" min="8" max="25" value="10" step="0.5">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="num_bathrooms">Number of Bathrooms</label>
+                                <input type="number" id="num_bathrooms" name="num_bathrooms" min="0" max="100" value="2">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="electrical_load_kw">Electrical Load (kW)</label>
+                                <input type="number" id="electrical_load_kw" name="electrical_load_kw" min="1" max="5000" value="10" step="1">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="finishing_level">Finishing Level</label>
+                                <select id="finishing_level" name="finishing_level">
+                                    <option value="basic">Basic (Whitewash, cement floor)</option>
+                                    <option value="standard" selected>Standard (Paint, tiles)</option>
+                                    <option value="premium">Premium (Designer, marble/granite)</option>
+                                    <option value="luxury">Luxury (Imported, high-end)</option>
                                 </select>
                             </div>
                         </div>
