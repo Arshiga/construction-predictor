@@ -3022,6 +3022,11 @@ function getTimeAgo(date) {
 
 // Initialize
 document.addEventListener('DOMContentLoaded', () => {
+    // Initialize language (Hindi/Tamil/English)
+    if (typeof initLanguage === 'function') {
+        initLanguage();
+    }
+
     // Load dashboard on start
     loadDashboard();
 

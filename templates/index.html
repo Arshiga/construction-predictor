@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="{{ url_for('static', filename='js/translations.js') }}"></script>
 </head>
 <body>
     <div class="container">
@@ -16,50 +17,58 @@
                     <i class="fas fa-landmark"></i>
                 </div>
                 <div class="header-text">
-                    <h1>Government Construction Cost & Delay Predictor</h1>
-                    <p class="subtitle">AI-Powered Estimation System for Government Contractors</p>
+                    <h1 data-i18n="app_title">Government Construction Cost & Delay Predictor</h1>
+                    <p class="subtitle" data-i18n="app_subtitle">AI-Powered Estimation System for Government Contractors</p>
+                </div>
+                <div class="language-selector-wrapper" style="margin-left:auto; display:flex; align-items:center; gap:8px;">
+                    <i class="fas fa-globe" style="color:#fff; font-size:16px;"></i>
+                    <select id="language-selector" onchange="switchLanguage(this.value)" style="padding:6px 12px; border-radius:8px; border:1px solid rgba(255,255,255,0.3); background:rgba(255,255,255,0.15); color:#fff; font-size:14px; cursor:pointer; outline:none;">
+                        <option value="en" style="color:#333;">English</option>
+                        <option value="hi" style="color:#333;">हिन्दी (Hindi)</option>
+                        <option value="ta" style="color:#333;">தமிழ் (Tamil)</option>
+                    </select>
                 </div>
             </div>
             <div class="header-stats" id="header-stats">
                 <div class="stat-item">
                     <i class="fas fa-building"></i>
                     <span class="stat-value" id="total-projects-stat">0</span>
-                    <span class="stat-label">Projects</span>
+                    <span class="stat-label" data-i18n="projects">Projects</span>
                 </div>
                 <div class="stat-item">
                     <i class="fas fa-chart-line"></i>
                     <span class="stat-value" id="total-predictions-stat">0</span>
-                    <span class="stat-label">Predictions</span>
+                    <span class="stat-label" data-i18n="predictions">Predictions</span>
                 </div>
                 <div class="stat-item">
                     <i class="fas fa-shield-alt"></i>
                     <span class="stat-value" id="avg-risk-stat">0</span>
-                    <span class="stat-label">Avg Risk</span>
+                    <span class="stat-label" data-i18n="avg_risk">Avg Risk</span>
                 </div>
             </div>
         </header>
 
         <nav class="tabs">
-            <button class="tab-btn active" data-tab="dashboard">
+            <button class="tab-btn active" data-tab="dashboard" data-i18n="dashboard">
                 <i class="fas fa-tachometer-alt"></i> Dashboard
             </button>
-            <button class="tab-btn" data-tab="predict">
+            <button class="tab-btn" data-tab="predict" data-i18n="new_prediction">
                 <i class="fas fa-calculator"></i> New Prediction
             </button>
-            <button class="tab-btn" data-tab="live-rates">
+            <button class="tab-btn" data-tab="live-rates" data-i18n="live_rates">
                 <i class="fas fa-rupee-sign"></i> Live Rates
                 <span class="alert-badge hidden" id="rates-alert-badge">!</span>
             </button>
-            <button class="tab-btn" data-tab="projects">
+            <button class="tab-btn" data-tab="projects" data-i18n="projects_tab">
                 <i class="fas fa-folder-open"></i> Projects
             </button>
-            <button class="tab-btn" data-tab="history">
+            <button class="tab-btn" data-tab="history" data-i18n="history">
                 <i class="fas fa-history"></i> History
             </button>
-            <button class="tab-btn" data-tab="compare">
+            <button class="tab-btn" data-tab="compare" data-i18n="compare">
                 <i class="fas fa-balance-scale"></i> Compare
             </button>
-            <button class="tab-btn" data-tab="analytics">
+            <button class="tab-btn" data-tab="analytics" data-i18n="analytics">
                 <i class="fas fa-chart-pie"></i> Analytics
             </button>
         </nav>
@@ -70,35 +79,35 @@
                 <!-- Quick Stats Cards -->
                 <div class="dashboard-card stats-card">
                     <div class="card-header">
-                        <h3><i class="fas fa-chart-bar"></i> Overview Statistics</h3>
+                        <h3 data-i18n="overview_statistics"><i class="fas fa-chart-bar"></i> Overview Statistics</h3>
                     </div>
                     <div class="stats-grid">
                         <div class="stat-box">
                             <div class="stat-icon residential"><i class="fas fa-home"></i></div>
                             <div class="stat-info">
                                 <span class="stat-number" id="residential-count">0</span>
-                                <span class="stat-text">Residential</span>
+                                <span class="stat-text" data-i18n="residential">Residential</span>
                             </div>
                         </div>
                         <div class="stat-box">
                             <div class="stat-icon commercial"><i class="fas fa-building"></i></div>
                             <div class="stat-info">
                                 <span class="stat-number" id="commercial-count">0</span>
-                                <span class="stat-text">Commercial</span>
+                                <span class="stat-text" data-i18n="commercial">Commercial</span>
                             </div>
                         </div>
                         <div class="stat-box">
                             <div class="stat-icon industrial"><i class="fas fa-industry"></i></div>
                             <div class="stat-info">
                                 <span class="stat-number" id="industrial-count">0</span>
-                                <span class="stat-text">Industrial</span>
+                                <span class="stat-text" data-i18n="industrial">Industrial</span>
                             </div>
                         </div>
                         <div class="stat-box">
                             <div class="stat-icon infrastructure"><i class="fas fa-road"></i></div>
                             <div class="stat-info">
                                 <span class="stat-number" id="infrastructure-count">0</span>
-                                <span class="stat-text">Infrastructure</span>
+                                <span class="stat-text" data-i18n="infrastructure">Infrastructure</span>
                             </div>
                         </div>
                     </div>
@@ -107,7 +116,7 @@
                 <!-- Project Type Distribution Chart -->
                 <div class="dashboard-card chart-card">
                     <div class="card-header">
-                        <h3><i class="fas fa-pie-chart"></i> Project Distribution</h3>
+                        <h3><i class="fas fa-pie-chart"></i> <span data-i18n="project_distribution">Project Distribution</span></h3>
                     </div>
                     <div class="chart-container">
                         <canvas id="projectTypeChart"></canvas>
@@ -117,7 +126,7 @@
                 <!-- Risk Overview Chart -->
                 <div class="dashboard-card chart-card">
                     <div class="card-header">
-                        <h3><i class="fas fa-exclamation-triangle"></i> Risk Distribution</h3>
+                        <h3><i class="fas fa-exclamation-triangle"></i> <span data-i18n="risk_distribution">Risk Distribution</span></h3>
                     </div>
                     <div class="chart-container">
                         <canvas id="riskDistributionChart"></canvas>
@@ -127,7 +136,7 @@
                 <!-- Recent Predictions -->
                 <div class="dashboard-card recent-card">
                     <div class="card-header">
-                        <h3><i class="fas fa-clock"></i> Recent Predictions</h3>
+                        <h3><i class="fas fa-clock"></i> <span data-i18n="recent_predictions">Recent Predictions</span></h3>
                         <button class="btn-link" onclick="switchToTab('history')">View All</button>
                     </div>
                     <div class="recent-predictions-list" id="recent-predictions-list">
@@ -138,24 +147,24 @@
                 <!-- Quick Actions -->
                 <div class="dashboard-card actions-card">
                     <div class="card-header">
-                        <h3><i class="fas fa-bolt"></i> Quick Actions</h3>
+                        <h3><i class="fas fa-bolt"></i> <span data-i18n="quick_actions">Quick Actions</span></h3>
                     </div>
                     <div class="quick-actions">
                         <button class="action-btn" onclick="switchToTab('predict')">
                             <i class="fas fa-plus-circle"></i>
-                            <span>New Prediction</span>
+                            <span data-i18n="new_prediction">New Prediction</span>
                         </button>
                         <button class="action-btn" onclick="switchToTab('projects')">
                             <i class="fas fa-folder-plus"></i>
-                            <span>Add Project</span>
+                            <span data-i18n="create_project">Add Project</span>
                         </button>
                         <button class="action-btn" onclick="switchToTab('compare')">
                             <i class="fas fa-code-compare"></i>
-                            <span>Compare Scenarios</span>
+                            <span data-i18n="compare">Compare Scenarios</span>
                         </button>
                         <button class="action-btn" onclick="exportAllData()">
                             <i class="fas fa-download"></i>
-                            <span>Export Data</span>
+                            <span data-i18n="export_data">Export Data</span>
                         </button>
                     </div>
                 </div>
@@ -163,7 +172,7 @@
                 <!-- Cost Trends Chart -->
                 <div class="dashboard-card chart-card wide">
                     <div class="card-header">
-                        <h3><i class="fas fa-chart-line"></i> Cost Prediction Trends</h3>
+                        <h3><i class="fas fa-chart-line"></i> <span data-i18n="cost_trends">Cost Prediction Trends</span></h3>
                     </div>
                     <div class="chart-container-wide">
                         <canvas id="costTrendChart"></canvas>
@@ -177,7 +186,7 @@
             <div class="rates-container">
                 <div class="rates-header">
                     <h2>
-                        <i class="fas fa-rupee-sign"></i> Live Material & Labor Rates
+                        <i class="fas fa-rupee-sign"></i> <span data-i18n="live_material_rates">Live Material & Labor Rates</span>
                         <span class="live-indicator" id="live-indicator" title="Live data">
                             <span class="live-dot"></span>
                             LIVE
@@ -185,7 +194,7 @@
                     </h2>
                     <div class="rates-controls">
                         <div class="region-selector">
-                            <label for="rate-region"><i class="fas fa-map-marker-alt"></i> Region:</label>
+                            <label for="rate-region"><i class="fas fa-map-marker-alt"></i> <span data-i18n="region">Region</span>:</label>
                             <select id="rate-region" onchange="loadRatesForRegion()">
                                 <option value="north">North India (Delhi, UP, Punjab)</option>
                                 <option value="south">South India (TN, Kerala, Karnataka)</option>
@@ -196,7 +205,7 @@
                             </select>
                         </div>
                         <button class="btn btn-primary" onclick="openReportPriceModal()" style="background:#28a745; border:none; color:white; padding:8px 16px; border-radius:6px; cursor:pointer; font-size:14px;">
-                            <i class="fas fa-plus-circle"></i> Report Local Price
+                            <i class="fas fa-plus-circle"></i> <span data-i18n="report_local_price">Report Local Price</span>
                         </button>
                         <button class="btn btn-refresh" id="refresh-rates-btn" onclick="refreshLivePrices()">
                             <i class="fas fa-sync-alt"></i> Refresh
@@ -209,7 +218,7 @@
 
                 <!-- Price Alerts Section -->
                 <div class="alerts-section" id="price-alerts-section">
-                    <h3><i class="fas fa-bell"></i> Price Alerts <span class="alert-count" id="alert-count">0</span></h3>
+                    <h3><i class="fas fa-bell"></i> <span data-i18n="price_alerts">Price Alerts</span> <span class="alert-count" id="alert-count">0</span></h3>
                     <div class="alerts-list" id="alerts-list">
                         <!-- Alerts will be populated dynamically -->
                         <div class="no-alerts">No price alerts at this time</div>
@@ -350,7 +359,7 @@
                 <div class="crowdsourced-section" style="margin-bottom:24px; background:#f0f9f0; border-radius:12px; padding:20px; border:1px solid #28a745;">
                     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
                         <h3 style="margin:0; color:#155724;">
-                            <i class="fas fa-users"></i> Community Reported Prices
+                            <i class="fas fa-users"></i> <span data-i18n="community_prices">Community Reported Prices</span>
                             <span id="crowd-total-reports" style="font-size:13px; background:#28a745; color:white; padding:2px 10px; border-radius:12px; margin-left:8px;">0 reports</span>
                         </h3>
                         <button onclick="loadCrowdsourcedPrices()" style="background:none; border:1px solid #28a745; color:#28a745; padding:6px 12px; border-radius:6px; cursor:pointer; font-size:13px;">
@@ -363,7 +372,7 @@
                         </div>
                     </div>
                     <div id="recent-reports-section" style="margin-top:16px;">
-                        <h4 style="color:#155724; margin-bottom:10px;"><i class="fas fa-clock"></i> Recent Reports</h4>
+                        <h4 style="color:#155724; margin-bottom:10px;"><i class="fas fa-clock"></i> <span data-i18n="recent_reports">Recent Reports</span></h4>
                         <div id="recent-reports-list" style="max-height:200px; overflow-y:auto;">
                         </div>
                     </div>
@@ -373,12 +382,12 @@
                 <div id="report-price-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:1000; justify-content:center; align-items:center;">
                     <div style="background:white; border-radius:16px; padding:30px; max-width:500px; width:90%; max-height:90vh; overflow-y:auto; position:relative;">
                         <button onclick="closeReportPriceModal()" style="position:absolute; top:15px; right:15px; background:none; border:none; font-size:20px; cursor:pointer; color:#666;">&times;</button>
-                        <h3 style="margin-top:0; color:#155724;"><i class="fas fa-plus-circle"></i> Report Local Material Price</h3>
-                        <p style="color:#666; font-size:14px;">Help the community by sharing current prices in your area.</p>
+                        <h3 style="margin-top:0; color:#155724;"><i class="fas fa-plus-circle"></i> <span data-i18n="report_price_title">Report Local Material Price</span></h3>
+                        <p style="color:#666; font-size:14px;" data-i18n="report_price_desc">Help the community by sharing current prices in your area.</p>
 
                         <form id="report-price-form" onsubmit="submitPriceReport(event)">
                             <div style="margin-bottom:14px;">
-                                <label style="display:block; font-weight:600; margin-bottom:4px;">Material Category *</label>
+                                <label style="display:block; font-weight:600; margin-bottom:4px;" data-i18n="material_category">Material Category *</label>
                                 <select id="rp-category" required style="width:100%; padding:10px; border:1px solid #ddd; border-radius:8px; font-size:14px;">
                                     <option value="">Select category</option>
                                     <option value="cement">Cement</option>
@@ -395,56 +404,56 @@
                             </div>
 
                             <div style="margin-bottom:14px;">
-                                <label style="display:block; font-weight:600; margin-bottom:4px;">Material Name *</label>
+                                <label style="display:block; font-weight:600; margin-bottom:4px;" data-i18n="material_name">Material Name *</label>
                                 <input type="text" id="rp-name" required placeholder="e.g., Cement OPC 43, TMT Fe500 12mm" style="width:100%; padding:10px; border:1px solid #ddd; border-radius:8px; font-size:14px; box-sizing:border-box;">
                             </div>
 
                             <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:14px;">
                                 <div>
-                                    <label style="display:block; font-weight:600; margin-bottom:4px;">Price (Rs.) *</label>
+                                    <label style="display:block; font-weight:600; margin-bottom:4px;" data-i18n="price">Price (Rs.) *</label>
                                     <input type="number" id="rp-price" required min="1" step="0.01" placeholder="e.g., 420" style="width:100%; padding:10px; border:1px solid #ddd; border-radius:8px; font-size:14px; box-sizing:border-box;">
                                 </div>
                                 <div>
-                                    <label style="display:block; font-weight:600; margin-bottom:4px;">City *</label>
+                                    <label style="display:block; font-weight:600; margin-bottom:4px;" data-i18n="city">City *</label>
                                     <input type="text" id="rp-city" required placeholder="e.g., Chennai" style="width:100%; padding:10px; border:1px solid #ddd; border-radius:8px; font-size:14px; box-sizing:border-box;">
                                 </div>
                             </div>
 
                             <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:14px;">
                                 <div>
-                                    <label style="display:block; font-weight:600; margin-bottom:4px;">Brand (optional)</label>
+                                    <label style="display:block; font-weight:600; margin-bottom:4px;" data-i18n="brand">Brand (optional)</label>
                                     <input type="text" id="rp-brand" placeholder="e.g., UltraTech, TATA" style="width:100%; padding:10px; border:1px solid #ddd; border-radius:8px; font-size:14px; box-sizing:border-box;">
                                 </div>
                                 <div>
-                                    <label style="display:block; font-weight:600; margin-bottom:4px;">You are a</label>
+                                    <label style="display:block; font-weight:600; margin-bottom:4px;" data-i18n="you_are">You are a</label>
                                     <select id="rp-reporter-type" style="width:100%; padding:10px; border:1px solid #ddd; border-radius:8px; font-size:14px;">
-                                        <option value="contractor">Contractor</option>
-                                        <option value="dealer">Material Dealer</option>
-                                        <option value="engineer">Civil Engineer</option>
-                                        <option value="homeowner">Home Owner</option>
+                                        <option value="contractor" data-i18n="contractor">Contractor</option>
+                                        <option value="dealer" data-i18n="dealer">Material Dealer</option>
+                                        <option value="engineer" data-i18n="engineer">Civil Engineer</option>
+                                        <option value="homeowner" data-i18n="homeowner">Home Owner</option>
                                     </select>
                                 </div>
                             </div>
 
                             <div style="margin-bottom:14px;">
-                                <label style="display:block; font-weight:600; margin-bottom:4px;">Your Name (optional)</label>
+                                <label style="display:block; font-weight:600; margin-bottom:4px;" data-i18n="your_name">Your Name (optional)</label>
                                 <input type="text" id="rp-reporter-name" placeholder="e.g., Ravi Kumar" style="width:100%; padding:10px; border:1px solid #ddd; border-radius:8px; font-size:14px; box-sizing:border-box;">
                             </div>
 
                             <div style="margin-bottom:18px;">
-                                <label style="display:block; font-weight:600; margin-bottom:4px;">Notes (optional)</label>
+                                <label style="display:block; font-weight:600; margin-bottom:4px;" data-i18n="notes">Notes (optional)</label>
                                 <input type="text" id="rp-notes" placeholder="e.g., Price at local dealer, wholesale rate" style="width:100%; padding:10px; border:1px solid #ddd; border-radius:8px; font-size:14px; box-sizing:border-box;">
                             </div>
 
                             <button type="submit" id="rp-submit-btn" style="width:100%; padding:12px; background:#28a745; color:white; border:none; border-radius:8px; font-size:16px; font-weight:600; cursor:pointer;">
-                                <i class="fas fa-paper-plane"></i> Submit Price Report
+                                <i class="fas fa-paper-plane"></i> <span data-i18n="submit_report">Submit Price Report</span>
                             </button>
                         </form>
 
                         <div id="rp-success-msg" style="display:none; text-align:center; padding:20px;">
                             <i class="fas fa-check-circle" style="font-size:48px; color:#28a745;"></i>
-                            <h4 style="color:#155724;">Thank you!</h4>
-                            <p style="color:#666;">Your price report has been submitted. This helps everyone get accurate local rates.</p>
+                            <h4 style="color:#155724;" data-i18n="thank_you">Thank you!</h4>
+                            <p style="color:#666;" data-i18n="report_submitted">Your price report has been submitted. This helps everyone get accurate local rates.</p>
                             <button onclick="closeReportPriceModal()" style="padding:10px 24px; background:#28a745; color:white; border:none; border-radius:8px; cursor:pointer; font-size:14px;">Close</button>
                         </div>
                     </div>
@@ -454,7 +463,7 @@
                 <div class="rates-tables">
                     <!-- Materials Table -->
                     <div class="rates-table-section">
-                        <h3><i class="fas fa-box-open"></i> All Material Rates</h3>
+                        <h3><i class="fas fa-box-open"></i> <span data-i18n="all_material_rates">All Material Rates</span></h3>
                         <div class="table-filters">
                             <select id="material-category-filter" onchange="filterMaterialsTable()">
                                 <option value="all">All Categories</option>
@@ -487,7 +496,7 @@
 
                     <!-- Labor Rates Table -->
                     <div class="rates-table-section">
-                        <h3><i class="fas fa-users"></i> Labor Rates</h3>
+                        <h3><i class="fas fa-users"></i> <span data-i18n="labor_rates">Labor Rates</span></h3>
                         <div class="table-container">
                             <table class="rates-table" id="labor-table">
                                 <thead>
@@ -669,10 +678,10 @@
 
                     <!-- Basic Information Section -->
                     <div class="form-section">
-                        <h3 class="section-title"><i class="fas fa-info-circle"></i> Basic Information</h3>
+                        <h3 class="section-title" data-i18n="basic_information"><i class="fas fa-info-circle"></i> Basic Information</h3>
                         <div class="form-grid">
                             <div class="form-group">
-                                <label for="project_type">Project Type *</label>
+                                <label for="project_type" data-i18n="project_type">Project Type *</label>
                                 <select id="project_type" name="project_type" required>
                                     <option value="residential">Residential (Housing/Quarters)</option>
                                     <option value="commercial">Commercial (Offices/Buildings)</option>
@@ -695,12 +704,12 @@
                             </div>
 
                             <div class="form-group">
-                                <label for="total_area_sqft">Total Area (sq ft) *</label>
+                                <label for="total_area_sqft" data-i18n="total_area">Total Area (sq ft) *</label>
                                 <input type="number" id="total_area_sqft" name="total_area_sqft" required min="100" value="10000">
                             </div>
 
                             <div class="form-group">
-                                <label for="num_floors">Number of Floors</label>
+                                <label for="num_floors" data-i18n="num_floors">Number of Floors</label>
                                 <input type="number" id="num_floors" name="num_floors" min="1" value="1">
                             </div>
                         </div>
@@ -708,20 +717,20 @@
 
                     <!-- Resource Planning Section -->
                     <div class="form-section">
-                        <h3 class="section-title"><i class="fas fa-users"></i> Resource Planning</h3>
+                        <h3 class="section-title" data-i18n="resource_planning"><i class="fas fa-users"></i> Resource Planning</h3>
                         <div class="form-grid">
                             <div class="form-group">
-                                <label for="num_workers">Number of Workers *</label>
+                                <label for="num_workers" data-i18n="num_workers">Number of Workers *</label>
                                 <input type="number" id="num_workers" name="num_workers" required min="1" value="20">
                             </div>
 
                             <div class="form-group">
-                                <label for="planned_duration_days">Planned Duration (days) *</label>
+                                <label for="planned_duration_days" data-i18n="planned_duration">Planned Duration (days) *</label>
                                 <input type="number" id="planned_duration_days" name="planned_duration_days" required min="1" value="180">
                             </div>
 
                             <div class="form-group">
-                                <label for="contractor_experience_years">Contractor Experience (years)</label>
+                                <label for="contractor_experience_years" data-i18n="contractor_experience">Contractor Experience (years)</label>
                                 <input type="number" id="contractor_experience_years" name="contractor_experience_years" min="0" value="5">
                             </div>
 
@@ -737,7 +746,7 @@
                         <h3 class="section-title"><i class="fas fa-gem"></i> Quality & Complexity</h3>
                         <div class="form-grid">
                             <div class="form-group">
-                                <label for="material_quality">Material Quality</label>
+                                <label for="material_quality" data-i18n="material_quality">Material Quality</label>
                                 <select id="material_quality" name="material_quality">
                                     <option value="economy">Economy</option>
                                     <option value="standard" selected>Standard</option>
@@ -746,7 +755,7 @@
                             </div>
 
                             <div class="form-group">
-                                <label for="complexity_level">Complexity Level</label>
+                                <label for="complexity_level" data-i18n="complexity_level">Complexity Level</label>
                                 <select id="complexity_level" name="complexity_level">
                                     <option value="low">Low</option>
                                     <option value="medium" selected>Medium</option>
@@ -777,10 +786,10 @@
 
                     <!-- Site Conditions Section -->
                     <div class="form-section">
-                        <h3 class="section-title"><i class="fas fa-mountain"></i> Site Conditions</h3>
+                        <h3 class="section-title" data-i18n="site_conditions"><i class="fas fa-mountain"></i> Site Conditions</h3>
                         <div class="form-grid">
                             <div class="form-group">
-                                <label for="weather_risk_zone">Weather Risk Zone</label>
+                                <label for="weather_risk_zone" data-i18n="weather_risk_zone">Weather Risk Zone</label>
                                 <select id="weather_risk_zone" name="weather_risk_zone">
                                     <option value="low">Low</option>
                                     <option value="moderate" selected>Moderate</option>
@@ -789,7 +798,7 @@
                             </div>
 
                             <div class="form-group">
-                                <label for="soil_type">Soil Type</label>
+                                <label for="soil_type" data-i18n="soil_type">Soil Type</label>
                                 <select id="soil_type" name="soil_type">
                                     <option value="normal" selected>Normal</option>
                                     <option value="rocky">Rocky</option>
@@ -800,7 +809,7 @@
                             </div>
 
                             <div class="form-group">
-                                <label for="seismic_zone">Seismic Zone</label>
+                                <label for="seismic_zone" data-i18n="seismic_zone">Seismic Zone</label>
                                 <select id="seismic_zone" name="seismic_zone">
                                     <option value="zone2">Zone II (Low)</option>
                                     <option value="zone3" selected>Zone III (Moderate)</option>
@@ -810,7 +819,7 @@
                             </div>
 
                             <div class="form-group">
-                                <label for="site_accessibility">Site Accessibility / Road Access</label>
+                                <label for="site_accessibility" data-i18n="site_accessibility">Site Accessibility / Road Access</label>
                                 <select id="site_accessibility" name="site_accessibility">
                                     <option value="easy" selected>Easy (Wide road, crane accessible)</option>
                                     <option value="moderate">Moderate (Standard road)</option>
@@ -820,7 +829,7 @@
                             </div>
 
                             <div class="form-group">
-                                <label for="water_table_level">Water Table Level</label>
+                                <label for="water_table_level" data-i18n="water_table">Water Table Level</label>
                                 <select id="water_table_level" name="water_table_level">
                                     <option value="deep" selected>Deep (>10m) - No issue</option>
                                     <option value="moderate">Moderate (5-10m)</option>
@@ -830,7 +839,7 @@
                             </div>
 
                             <div class="form-group">
-                                <label for="site_topography">Site Topography</label>
+                                <label for="site_topography" data-i18n="site_topography">Site Topography</label>
                                 <select id="site_topography" name="site_topography">
                                     <option value="flat" selected>Flat Land</option>
                                     <option value="gentle_slope">Gentle Slope</option>
@@ -840,7 +849,7 @@
                             </div>
 
                             <div class="form-group">
-                                <label for="foundation_type">Foundation Type</label>
+                                <label for="foundation_type" data-i18n="foundation_type">Foundation Type</label>
                                 <select id="foundation_type" name="foundation_type">
                                     <option value="isolated" selected>Isolated Footing</option>
                                     <option value="strip">Strip Foundation</option>
@@ -850,7 +859,7 @@
                             </div>
 
                             <div class="form-group">
-                                <label for="distance_from_city_km">Distance from City (km)</label>
+                                <label for="distance_from_city_km" data-i18n="distance_city">Distance from City (km)</label>
                                 <input type="number" id="distance_from_city_km" name="distance_from_city_km" min="0" max="200" value="5" step="1">
                             </div>
                         </div>
@@ -858,25 +867,25 @@
 
                     <!-- Building Specifications Section -->
                     <div class="form-section" id="building-specs-section">
-                        <h3 class="section-title"><i class="fas fa-building"></i> Building Specifications</h3>
+                        <h3 class="section-title" data-i18n="building_specifications"><i class="fas fa-building"></i> Building Specifications</h3>
                         <div class="form-grid">
                             <div class="form-group">
-                                <label for="floor_height_ft">Floor Height (feet)</label>
+                                <label for="floor_height_ft" data-i18n="floor_height">Floor Height (feet)</label>
                                 <input type="number" id="floor_height_ft" name="floor_height_ft" min="8" max="25" value="10" step="0.5">
                             </div>
 
                             <div class="form-group">
-                                <label for="num_bathrooms">Number of Bathrooms</label>
+                                <label for="num_bathrooms" data-i18n="num_bathrooms">Number of Bathrooms</label>
                                 <input type="number" id="num_bathrooms" name="num_bathrooms" min="0" max="100" value="2">
                             </div>
 
                             <div class="form-group">
-                                <label for="electrical_load_kw">Electrical Load (kW)</label>
+                                <label for="electrical_load_kw" data-i18n="electrical_load">Electrical Load (kW)</label>
                                 <input type="number" id="electrical_load_kw" name="electrical_load_kw" min="1" max="5000" value="10" step="1">
                             </div>
 
                             <div class="form-group">
-                                <label for="finishing_level">Finishing Level</label>
+                                <label for="finishing_level" data-i18n="finishing_level">Finishing Level</label>
                                 <select id="finishing_level" name="finishing_level">
                                     <option value="basic">Basic (Whitewash, cement floor)</option>
                                     <option value="standard" selected>Standard (Paint, tiles)</option>
@@ -939,7 +948,7 @@
 
                     <!-- Additional Features Section -->
                     <div class="form-section" id="building-features-section">
-                        <h3 class="section-title"><i class="fas fa-plus-square"></i> Additional Features</h3>
+                        <h3 class="section-title" data-i18n="additional_features"><i class="fas fa-plus-square"></i> Additional Features</h3>
                         <div class="checkbox-grid">
                             <div class="checkbox-item">
                                 <input type="checkbox" id="has_basement" name="has_basement">
@@ -1036,7 +1045,7 @@
             </div>
 
             <div id="prediction-result" class="result-container hidden">
-                <h2><i class="fas fa-chart-bar"></i> Prediction Results</h2>
+                <h2><i class="fas fa-chart-bar"></i> <span data-i18n="prediction_results">Prediction Results</span></h2>
 
                 <div id="result-project-name" class="result-project-header hidden">
                     <span class="project-label">Project:</span>
@@ -1189,7 +1198,7 @@
                 <div class="results-grid" id="ml-results-grid">
                     <div class="result-card cost">
                         <div class="card-icon"><i class="fas fa-indian-rupee-sign"></i></div>
-                        <h3>Estimated Total Cost</h3>
+                        <h3 data-i18n="predicted_cost">Estimated Total Cost</h3>
                         <div class="main-value" id="predicted-cost">₹0</div>
                         <div class="range" id="cost-range">Range: ₹0 - ₹0</div>
                         <div class="cost-per-sqft" id="cost-per-sqft">₹0 per sq ft</div>
@@ -1197,7 +1206,7 @@
 
                     <div class="result-card delay">
                         <div class="card-icon"><i class="fas fa-clock"></i></div>
-                        <h3>Predicted Delay</h3>
+                        <h3 data-i18n="predicted_delay">Predicted Delay</h3>
                         <div class="main-value" id="predicted-delay">0 days</div>
                         <div class="range" id="delay-range">Range: 0 - 0 days</div>
                         <div class="completion-date" id="completion-date">Est. completion: --</div>
@@ -1205,7 +1214,7 @@
 
                     <div class="result-card probability">
                         <div class="card-icon"><i class="fas fa-percentage"></i></div>
-                        <h3>Delay Probability</h3>
+                        <h3 data-i18n="delay_probability">Delay Probability</h3>
                         <div class="main-value" id="delay-probability">0%</div>
                         <div class="probability-bar">
                             <div class="probability-fill" id="probability-fill"></div>
@@ -1214,7 +1223,7 @@
 
                     <div class="result-card risk">
                         <div class="card-icon"><i class="fas fa-exclamation-triangle"></i></div>
-                        <h3>Risk Score</h3>
+                        <h3 data-i18n="risk_score">Risk Score</h3>
                         <div class="main-value" id="risk-score">0</div>
                         <div class="risk-meter">
                             <div class="risk-fill" id="risk-fill"></div>
@@ -1270,7 +1279,7 @@
 
                 <!-- Risk Factors Section -->
                 <div class="risk-factors-section">
-                    <h3><i class="fas fa-shield-alt"></i> Risk Analysis</h3>
+                    <h3><i class="fas fa-shield-alt"></i> <span data-i18n="risk_factors">Risk Analysis</span></h3>
                     <div class="risk-analysis-grid">
                         <div class="risk-chart-container">
                             <canvas id="riskFactorsChart"></canvas>
@@ -1281,7 +1290,7 @@
 
                 <!-- Recommendations Section -->
                 <div class="recommendations-section">
-                    <h3><i class="fas fa-lightbulb"></i> AI Recommendations</h3>
+                    <h3><i class="fas fa-lightbulb"></i> <span data-i18n="recommendations">AI Recommendations</span></h3>
                     <ul id="recommendations-list"></ul>
                 </div>
 
@@ -1369,7 +1378,7 @@
         <!-- Projects Tab -->
         <section id="projects" class="tab-content">
             <div class="section-header">
-                <h2><i class="fas fa-folder-open"></i> Saved Projects</h2>
+                <h2><i class="fas fa-folder-open"></i> <span data-i18n="all_projects">Saved Projects</span></h2>
                 <button class="btn btn-primary" id="new-project-btn">
                     <i class="fas fa-plus"></i> New Project
                 </button>
@@ -1448,7 +1457,7 @@
         <!-- History Tab -->
         <section id="history" class="tab-content">
             <div class="section-header">
-                <h2><i class="fas fa-history"></i> Prediction History</h2>
+                <h2><i class="fas fa-history"></i> <span data-i18n="history">Prediction History</span></h2>
                 <div class="history-actions">
                     <button class="btn btn-secondary" onclick="exportHistory()">
                         <i class="fas fa-download"></i> Export History
@@ -1504,7 +1513,7 @@
 
         <!-- Compare Tab -->
         <section id="compare" class="tab-content">
-            <h2><i class="fas fa-balance-scale"></i> Compare Scenarios</h2>
+            <h2><i class="fas fa-balance-scale"></i> <span data-i18n="compare">Compare Scenarios</span></h2>
             <p class="section-desc">Compare different project configurations to find the optimal approach for your construction project.</p>
 
             <div class="compare-actions">
@@ -1640,7 +1649,7 @@
 
         <!-- Analytics Tab -->
         <section id="analytics" class="tab-content">
-            <h2><i class="fas fa-chart-pie"></i> Analytics Dashboard</h2>
+            <h2><i class="fas fa-chart-pie"></i> <span data-i18n="analytics">Analytics Dashboard</span></h2>
 
             <div class="analytics-grid">
                 <div class="analytics-card">
