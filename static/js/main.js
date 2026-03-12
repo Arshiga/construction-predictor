@@ -404,6 +404,7 @@ function switchToTab(tabId) {
     if (tabId === 'projects') loadProjects();
     if (tabId === 'history') loadHistory();
     if (tabId === 'analytics') loadAnalytics();
+    if (tabId === 'material-calc' && typeof initMaterialCalc === 'function') initMaterialCalc();
 }
 
 // Initialize Dashboard
@@ -3049,3 +3050,411 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 });
+
+// ==================== MATERIAL QUANTITY CALCULATOR ====================
+
+// Mix ratio constants (IS Code standard)
+const CALC_MIX_RATIOS = {
+    'M7.5':  { cement: 1, sand: 4, aggregate: 8, water_cement: 0.60 },
+    'M10':   { cement: 1, sand: 3, aggregate: 6, water_cement: 0.55 },
+    'M15':   { cement: 1, sand: 2, aggregate: 4, water_cement: 0.50 },
+    'M20':   { cement: 1, sand: 1.5, aggregate: 3, water_cement: 0.45 },
+    'M25':   { cement: 1, sand: 1, aggregate: 2, water_cement: 0.42 },
+};
+
+// Default material rates (fallback if live rates not loaded)
+const DEFAULT_RATES = {
+    cement: 380,      // per bag (50kg)
+    sand: 2200,       // per cum
+    aggregate: 1800,  // per cum
+    steel: 72,        // per kg
+    bricks: 8500,     // per 1000 nos
+    water: 1,         // per liter (negligible)
+};
+
+// Summary items storage
+let calcSummaryItems = [];
+
+// Show/hide fields based on construction type
+function onCalcTypeChange() {
+    const type = document.getElementById('calc-type').value;
+    const lengthGroup = document.getElementById('calc-length-group');
+    const widthGroup = document.getElementById('calc-width-group');
+    const heightGroup = document.getElementById('calc-height-group');
+    const thicknessGroup = document.getElementById('calc-thickness-group');
+    const wallThicknessGroup = document.getElementById('calc-wall-thickness-group');
+    const numItemsGroup = document.getElementById('calc-num-items-group');
+    const steelGroup = document.getElementById('calc-steel-percent-group');
+    const plasterGroup = document.getElementById('calc-plaster-thickness-group');
+    const mixGroup = document.getElementById('calc-mix').closest('.form-group');
+
+    // Reset all to visible
+    [lengthGroup, widthGroup, heightGroup, thicknessGroup].forEach(g => g.style.display = '');
+    wallThicknessGroup.classList.add('hidden');
+    numItemsGroup.classList.add('hidden');
+    steelGroup.style.display = '';
+    plasterGroup.style.display = 'none';
+    mixGroup.style.display = '';
+
+    switch(type) {
+        case 'room':
+            thicknessGroup.style.display = 'none';
+            document.getElementById('calc-steel-percent').value = 1;
+            break;
+        case 'slab':
+            heightGroup.style.display = 'none';
+            thicknessGroup.style.display = '';
+            document.getElementById('calc-thickness').value = 150;
+            document.getElementById('calc-steel-percent').value = 1;
+            break;
+        case 'wall':
+            widthGroup.style.display = 'none';
+            thicknessGroup.style.display = 'none';
+            wallThicknessGroup.classList.remove('hidden');
+            steelGroup.style.display = 'none';
+            // For brick wall, mix is mortar mix - change label context
+            break;
+        case 'column':
+            // Use length as width(mm), width as depth(mm), height stays
+            document.getElementById('calc-length').closest('.form-group').querySelector('label').textContent = 'Width (mm)';
+            document.getElementById('calc-width').closest('.form-group').querySelector('label').textContent = 'Depth (mm)';
+            document.getElementById('calc-length').value = 300;
+            document.getElementById('calc-width').value = 300;
+            document.getElementById('calc-height').value = 3;
+            thicknessGroup.style.display = 'none';
+            numItemsGroup.classList.remove('hidden');
+            document.getElementById('calc-steel-percent').value = 2.5;
+            break;
+        case 'footing':
+            document.getElementById('calc-height').closest('.form-group').querySelector('label').textContent = 'Depth (meters)';
+            document.getElementById('calc-height').value = 0.6;
+            thicknessGroup.style.display = 'none';
+            numItemsGroup.classList.remove('hidden');
+            document.getElementById('calc-num-items').value = 9;
+            document.getElementById('calc-steel-percent').value = 0.8;
+            break;
+        case 'road':
+            heightGroup.style.display = 'none';
+            thicknessGroup.style.display = '';
+            document.getElementById('calc-thickness').value = 200;
+            document.getElementById('calc-length').value = 100;
+            document.getElementById('calc-width').value = 5;
+            steelGroup.style.display = 'none';
+            break;
+        case 'plastering':
+            thicknessGroup.style.display = 'none';
+            heightGroup.style.display = 'none';
+            widthGroup.style.display = 'none';
+            steelGroup.style.display = 'none';
+            plasterGroup.style.display = '';
+            mixGroup.style.display = 'none';
+            document.getElementById('calc-length').closest('.form-group').querySelector('label').textContent = 'Wall Area (sq meters)';
+            document.getElementById('calc-length').value = 50;
+            break;
+    }
+
+    // Reset labels for non-column types
+    if (type !== 'column') {
+        document.getElementById('calc-length').closest('.form-group').querySelector('label').textContent = type === 'plastering' ? 'Wall Area (sq meters)' : 'Length (meters)';
+        document.getElementById('calc-width').closest('.form-group').querySelector('label').textContent = 'Width (meters)';
+    }
+    if (type !== 'footing') {
+        document.getElementById('calc-height').closest('.form-group').querySelector('label').textContent = 'Height (meters)';
+    }
+}
+
+// Show/hide custom ratio inputs
+function onMixChange() {
+    const mix = document.getElementById('calc-mix').value;
+    const customGroup = document.getElementById('custom-ratio-group');
+    if (mix === 'custom') {
+        customGroup.classList.remove('hidden');
+    } else {
+        customGroup.classList.add('hidden');
+    }
+}
+
+// Get current mix ratio
+function getCalcMixRatio() {
+    const mix = document.getElementById('calc-mix').value;
+    if (mix === 'custom') {
+        return {
+            cement: parseFloat(document.getElementById('calc-custom-cement').value) || 1,
+            sand: parseFloat(document.getElementById('calc-custom-sand').value) || 1.5,
+            aggregate: parseFloat(document.getElementById('calc-custom-agg').value) || 3,
+            water_cement: 0.45,
+        };
+    }
+    return CALC_MIX_RATIOS[mix];
+}
+
+// Main calculation function
+function performCalculation() {
+    const type = document.getElementById('calc-type').value;
+    const length = parseFloat(document.getElementById('calc-length').value) || 0;
+    const width = parseFloat(document.getElementById('calc-width').value) || 0;
+    const height = parseFloat(document.getElementById('calc-height').value) || 0;
+    const thickness = parseFloat(document.getElementById('calc-thickness').value) || 150;
+    const steelPercent = parseFloat(document.getElementById('calc-steel-percent').value) || 0;
+    const numItems = parseInt(document.getElementById('calc-num-items').value) || 1;
+    const ratio = getCalcMixRatio();
+
+    let wetVolume = 0;
+    let cementBags = 0, sandCum = 0, aggCum = 0, steelKg = 0, bricksNos = 0, waterLiters = 0;
+    let workDescription = '';
+
+    switch(type) {
+        case 'room': {
+            // Room: floor slab + 4 walls concrete (simplified: just the slab for concrete)
+            // Slab: L x W x 0.15m (default slab thickness)
+            wetVolume = length * width * 0.15;
+            workDescription = `Room ${length}m x ${width}m x ${height}m (RCC Slab 150mm)`;
+            break;
+        }
+        case 'slab': {
+            wetVolume = length * width * (thickness / 1000);
+            workDescription = `RCC Slab ${length}m x ${width}m x ${thickness}mm`;
+            break;
+        }
+        case 'wall': {
+            const wallThickness = parseInt(document.getElementById('calc-wall-thickness').value) || 230;
+            const wallArea = length * height; // sqm
+            const brickWithMortar_L = 0.240; // 230mm + 10mm mortar
+            const brickWithMortar_H = 0.085; // 75mm + 10mm mortar
+            const bricksPerSqm = 1 / (brickWithMortar_L * brickWithMortar_H);
+            const multiplier = wallThickness === 230 ? 2 : 1;
+            bricksNos = Math.ceil(bricksPerSqm * wallArea * multiplier * 1.05); // 5% wastage
+
+            // Mortar for brickwork: approx 0.002 cum per brick for half-brick
+            const mortarPerBrick = wallThickness === 230 ? 0.002 : 0.0015;
+            const mortarVolume = bricksNos * mortarPerBrick;
+            // Mortar dry volume (1.33 factor for mortar)
+            const dryMortarVolume = mortarVolume * 1.33;
+            // Mortar ratio for brickwork: typically 1:6 (cement:sand)
+            const mortarSum = 1 + 6;
+            cementBags = Math.ceil((1 / mortarSum) * dryMortarVolume * 1440 / 50);
+            sandCum = parseFloat(((6 / mortarSum) * dryMortarVolume).toFixed(2));
+            waterLiters = Math.ceil(cementBags * 50 * 0.50);
+            workDescription = `Brick Wall ${length}m x ${height}m (${wallThickness}mm thick)`;
+
+            // Show results directly for wall (no concrete volume calc)
+            showCalcResults(workDescription, cementBags, sandCum, 0, 0, bricksNos, waterLiters);
+            return;
+        }
+        case 'column': {
+            // length & width are in mm for columns
+            const colWidth = length / 1000; // convert mm to m
+            const colDepth = width / 1000;
+            wetVolume = colWidth * colDepth * height * numItems;
+            workDescription = `RCC Column ${length}mm x ${width}mm x ${height}m (x${numItems})`;
+            break;
+        }
+        case 'footing': {
+            wetVolume = length * width * height * numItems;
+            workDescription = `RCC Footing ${length}m x ${width}m x ${height}m (x${numItems})`;
+            break;
+        }
+        case 'road': {
+            wetVolume = length * width * (thickness / 1000);
+            workDescription = `Road/Pavement ${length}m x ${width}m x ${thickness}mm`;
+            break;
+        }
+        case 'plastering': {
+            const plasterThickness = parseInt(document.getElementById('calc-plaster-thickness').value) || 12;
+            const area = length; // length field used as area for plastering
+            const plasterVolume = area * (plasterThickness / 1000);
+            const dryVolume = plasterVolume * 1.33;
+            // Plastering mortar: 1:6 for interior (12mm), 1:4 for exterior (20mm+)
+            const mortarRatio = plasterThickness <= 12 ? 6 : 4;
+            const mortarSum = 1 + mortarRatio;
+            cementBags = Math.ceil((1 / mortarSum) * dryVolume * 1440 / 50);
+            sandCum = parseFloat(((mortarRatio / mortarSum) * dryVolume).toFixed(2));
+            waterLiters = Math.ceil(cementBags * 50 * 0.45);
+            workDescription = `Plastering ${area} sqm (${plasterThickness}mm thick)`;
+            showCalcResults(workDescription, cementBags, sandCum, 0, 0, 0, waterLiters);
+            return;
+        }
+    }
+
+    // Calculate dry volume (54% increase for concrete - IS standard)
+    const dryVolume = wetVolume * 1.54;
+    const sum = ratio.cement + ratio.sand + ratio.aggregate;
+
+    // Material quantities
+    const cementVolume = (ratio.cement / sum) * dryVolume;
+    cementBags = Math.ceil(cementVolume * 1440 / 50); // 1440 kg/cum density, 50kg per bag
+    sandCum = parseFloat(((ratio.sand / sum) * dryVolume).toFixed(2));
+    aggCum = parseFloat(((ratio.aggregate / sum) * dryVolume).toFixed(2));
+    waterLiters = Math.ceil(cementBags * 50 * ratio.water_cement);
+
+    // Steel calculation
+    if (steelPercent > 0 && type !== 'road' && type !== 'wall') {
+        steelKg = parseFloat((steelPercent / 100 * wetVolume * 7850).toFixed(1)); // 7850 kg/cum steel density
+    }
+
+    // Add 5% wastage
+    cementBags = Math.ceil(cementBags * 1.05);
+    sandCum = parseFloat((sandCum * 1.05).toFixed(2));
+    aggCum = parseFloat((aggCum * 1.05).toFixed(2));
+    steelKg = parseFloat((steelKg * 1.05).toFixed(1));
+
+    showCalcResults(workDescription, cementBags, sandCum, aggCum, steelKg, bricksNos, waterLiters);
+}
+
+// Display calculation results
+function showCalcResults(description, cement, sand, aggregate, steel, bricks, water) {
+    const resultsDiv = document.getElementById('calc-results');
+    resultsDiv.classList.remove('hidden');
+
+    // Work info
+    document.getElementById('calc-work-info').innerHTML = `
+        <span class="info-badge"><i class="fas fa-hard-hat"></i> ${description}</span>
+        <span class="info-badge"><i class="fas fa-flask"></i> Mix: ${document.getElementById('calc-mix').value}</span>
+    `;
+
+    // Quantity table
+    const tbody = document.getElementById('calc-qty-tbody');
+    let rows = '';
+    if (cement > 0) rows += `<tr><td><i class="fas fa-cube" style="color:#6c757d;"></i> Cement (OPC 43)</td><td><strong>${cement}</strong></td><td>bags (50kg)</td></tr>`;
+    if (sand > 0) rows += `<tr><td><i class="fas fa-mountain" style="color:#d4a574;"></i> Sand / Fine Aggregate</td><td><strong>${sand}</strong></td><td>cubic meter (cum)</td></tr>`;
+    if (aggregate > 0) rows += `<tr><td><i class="fas fa-cubes" style="color:#808080;"></i> Coarse Aggregate (20mm)</td><td><strong>${aggregate}</strong></td><td>cubic meter (cum)</td></tr>`;
+    if (steel > 0) rows += `<tr><td><i class="fas fa-bars" style="color:#4a90d9;"></i> TMT Steel (Fe500)</td><td><strong>${steel}</strong></td><td>kg</td></tr>`;
+    if (bricks > 0) rows += `<tr><td><i class="fas fa-th-large" style="color:#c0392b;"></i> Bricks (1st Class)</td><td><strong>${bricks.toLocaleString()}</strong></td><td>nos</td></tr>`;
+    if (water > 0) rows += `<tr><td><i class="fas fa-tint" style="color:#3498db;"></i> Water</td><td><strong>${water.toLocaleString()}</strong></td><td>liters</td></tr>`;
+    tbody.innerHTML = rows;
+
+    // Cost estimate
+    const rates = getMaterialRates();
+    const costTbody = document.getElementById('calc-cost-tbody');
+    let costRows = '';
+    let totalCost = 0;
+
+    if (cement > 0) {
+        const cost = cement * rates.cement;
+        totalCost += cost;
+        costRows += `<tr><td>Cement</td><td>${cement} bags</td><td>Rs. ${rates.cement.toLocaleString()}</td><td>Rs. ${cost.toLocaleString()}</td></tr>`;
+    }
+    if (sand > 0) {
+        const cost = Math.round(sand * rates.sand);
+        totalCost += cost;
+        costRows += `<tr><td>Sand</td><td>${sand} cum</td><td>Rs. ${rates.sand.toLocaleString()}</td><td>Rs. ${cost.toLocaleString()}</td></tr>`;
+    }
+    if (aggregate > 0) {
+        const cost = Math.round(aggregate * rates.aggregate);
+        totalCost += cost;
+        costRows += `<tr><td>Aggregate</td><td>${aggregate} cum</td><td>Rs. ${rates.aggregate.toLocaleString()}</td><td>Rs. ${cost.toLocaleString()}</td></tr>`;
+    }
+    if (steel > 0) {
+        const cost = Math.round(steel * rates.steel);
+        totalCost += cost;
+        costRows += `<tr><td>Steel TMT</td><td>${steel} kg</td><td>Rs. ${rates.steel.toLocaleString()}</td><td>Rs. ${cost.toLocaleString()}</td></tr>`;
+    }
+    if (bricks > 0) {
+        const cost = Math.round(bricks * rates.bricks / 1000);
+        totalCost += cost;
+        costRows += `<tr><td>Bricks</td><td>${bricks.toLocaleString()} nos</td><td>Rs. ${rates.bricks.toLocaleString()}/1000</td><td>Rs. ${cost.toLocaleString()}</td></tr>`;
+    }
+    costTbody.innerHTML = costRows;
+    document.getElementById('calc-grand-total').textContent = `Rs. ${totalCost.toLocaleString()}`;
+
+    // Store current result for summary
+    window._lastCalcResult = { description, cement, sand, aggregate, steel, bricks, water, totalCost };
+
+    // Scroll to results
+    resultsDiv.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+// Get material rates (from live rates or defaults)
+function getMaterialRates() {
+    // Try to use live rates if available
+    if (typeof currentRatesData !== 'undefined' && currentRatesData && currentRatesData.materials) {
+        const m = currentRatesData.materials;
+        return {
+            cement: (m.cement_opc_43 && m.cement_opc_43.rate) || DEFAULT_RATES.cement,
+            sand: (m.river_sand && m.river_sand.rate) || DEFAULT_RATES.sand,
+            aggregate: (m.aggregate_20mm && m.aggregate_20mm.rate) || DEFAULT_RATES.aggregate,
+            steel: (m.steel_tmt_fe500 && m.steel_tmt_fe500.rate) || DEFAULT_RATES.steel,
+            bricks: (m.brick_first_class && m.brick_first_class.rate) || DEFAULT_RATES.bricks,
+        };
+    }
+    return { ...DEFAULT_RATES };
+}
+
+// Clear results
+function clearCalcResults() {
+    document.getElementById('calc-results').classList.add('hidden');
+    window._lastCalcResult = null;
+}
+
+// Add current result to summary
+function addToCalcSummary() {
+    if (!window._lastCalcResult) return;
+    calcSummaryItems.push({ ...window._lastCalcResult });
+    renderCalcSummary();
+}
+
+// Remove item from summary
+function removeFromCalcSummary(index) {
+    calcSummaryItems.splice(index, 1);
+    renderCalcSummary();
+    if (calcSummaryItems.length === 0) {
+        document.getElementById('calc-summary').classList.add('hidden');
+    }
+}
+
+// Render summary table
+function renderCalcSummary() {
+    const section = document.getElementById('calc-summary');
+    section.classList.remove('hidden');
+    const tbody = document.getElementById('calc-summary-tbody');
+
+    let totalCement = 0, totalSand = 0, totalAgg = 0, totalSteel = 0, totalBricks = 0, totalCost = 0;
+    let rows = '';
+
+    calcSummaryItems.forEach((item, i) => {
+        totalCement += item.cement;
+        totalSand += item.sand;
+        totalAgg += item.aggregate;
+        totalSteel += item.steel;
+        totalBricks += item.bricks;
+        totalCost += item.totalCost;
+
+        rows += `<tr>
+            <td>${i + 1}</td>
+            <td>${item.description}</td>
+            <td>${item.cement}</td>
+            <td>${item.sand}</td>
+            <td>${item.aggregate}</td>
+            <td>${item.steel}</td>
+            <td>${item.bricks.toLocaleString()}</td>
+            <td>Rs. ${item.totalCost.toLocaleString()}</td>
+            <td><button class="btn btn-sm" onclick="removeFromCalcSummary(${i})" style="color:red; border:none; background:none; cursor:pointer;"><i class="fas fa-trash"></i></button></td>
+        </tr>`;
+    });
+
+    tbody.innerHTML = rows;
+    document.getElementById('summary-total-cement').innerHTML = `<strong>${totalCement}</strong>`;
+    document.getElementById('summary-total-sand').innerHTML = `<strong>${totalSand.toFixed(2)}</strong>`;
+    document.getElementById('summary-total-agg').innerHTML = `<strong>${totalAgg.toFixed(2)}</strong>`;
+    document.getElementById('summary-total-steel').innerHTML = `<strong>${totalSteel.toFixed(1)}</strong>`;
+    document.getElementById('summary-total-bricks').innerHTML = `<strong>${totalBricks.toLocaleString()}</strong>`;
+    document.getElementById('summary-total-cost').innerHTML = `<strong>Rs. ${totalCost.toLocaleString()}</strong>`;
+
+    section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+// Clear all summary
+function clearCalcSummary() {
+    calcSummaryItems = [];
+    document.getElementById('calc-summary').classList.add('hidden');
+}
+
+// Print summary
+function printCalcSummary() {
+    window.print();
+}
+
+// Initialize calculator (called when tab is opened)
+function initMaterialCalc() {
+    onCalcTypeChange();
+}

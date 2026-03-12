@@ -189,6 +189,24 @@ const translations = {
         export_data: "Export Data",
         prediction_results: "Prediction Results",
 
+        // Material Calculator
+        material_calculator: "Material Calculator",
+        calc_desc: "Calculate exact material quantities for any construction work based on IS code standards.",
+        calc_construction_type: "Construction Type",
+        calc_dimensions: "Dimensions",
+        calc_length: "Length (meters)",
+        calc_width: "Width (meters)",
+        calc_height: "Height (meters)",
+        calc_thickness: "Thickness (mm)",
+        calc_mix_ratio: "Concrete Mix Ratio",
+        calc_calculate: "Calculate Quantities",
+        calc_clear: "Clear",
+        calc_results: "Calculation Results",
+        calc_cost_estimate: "Estimated Material Cost",
+        calc_wastage_note: "Quantities include 5% wastage allowance. Rates based on current market prices.",
+        calc_add_to_summary: "Add to Summary",
+        calc_summary: "Material Summary (All Items)",
+
         // Common
         days: "days",
         loading: "Loading...",
@@ -390,6 +408,24 @@ const translations = {
         export_data: "डेटा डाउनलोड",
         prediction_results: "अनुमान परिणाम",
 
+        // Material Calculator
+        material_calculator: "सामग्री कैलकुलेटर",
+        calc_desc: "IS कोड मानकों के आधार पर किसी भी निर्माण कार्य के लिए सटीक सामग्री मात्रा की गणना करें।",
+        calc_construction_type: "निर्माण प्रकार",
+        calc_dimensions: "माप / आकार",
+        calc_length: "लंबाई (मीटर)",
+        calc_width: "चौड़ाई (मीटर)",
+        calc_height: "ऊंचाई (मीटर)",
+        calc_thickness: "मोटाई (mm)",
+        calc_mix_ratio: "कंक्रीट मिक्स अनुपात",
+        calc_calculate: "मात्रा की गणना करें",
+        calc_clear: "साफ करें",
+        calc_results: "गणना परिणाम",
+        calc_cost_estimate: "अनुमानित सामग्री लागत",
+        calc_wastage_note: "मात्रा में 5% बर्बादी शामिल है। दरें वर्तमान बाजार मूल्य पर आधारित हैं।",
+        calc_add_to_summary: "सारांश में जोड़ें",
+        calc_summary: "सामग्री सारांश (सभी आइटम)",
+
         // Common
         days: "दिन",
         loading: "लोड हो रहा है...",
@@ -590,6 +626,24 @@ const translations = {
         cost_trends: "செலவு கணிப்பு போக்குகள்",
         export_data: "தரவு பதிவிறக்கம்",
         prediction_results: "கணிப்பு முடிவுகள்",
+
+        // Material Calculator
+        material_calculator: "பொருள் கணிப்பான்",
+        calc_desc: "IS குறியீடு தரநிலைகளின் அடிப்படையில் எந்த கட்டுமான வேலைக்கும் துல்லியமான பொருள் அளவைக் கணக்கிடுங்கள்.",
+        calc_construction_type: "கட்டுமான வகை",
+        calc_dimensions: "அளவுகள்",
+        calc_length: "நீளம் (மீட்டர்)",
+        calc_width: "அகலம் (மீட்டர்)",
+        calc_height: "உயரம் (மீட்டர்)",
+        calc_thickness: "தடிமன் (mm)",
+        calc_mix_ratio: "கான்கிரீட் கலவை விகிதம்",
+        calc_calculate: "அளவைக் கணக்கிடு",
+        calc_clear: "அழி",
+        calc_results: "கணக்கீட்டு முடிவுகள்",
+        calc_cost_estimate: "மதிப்பிடப்பட்ட பொருள் செலவு",
+        calc_wastage_note: "அளவுகளில் 5% விரயம் சேர்க்கப்பட்டுள்ளது. விலைகள் தற்போதைய சந்தை விலையை அடிப்படையாகக் கொண்டவை.",
+        calc_add_to_summary: "சுருக்கத்தில் சேர்",
+        calc_summary: "பொருள் சுருக்கம் (அனைத்து பொருட்கள்)",
 
         // Common
         days: "நாட்கள்",

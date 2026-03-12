@@ -71,6 +71,9 @@
             <button class="tab-btn" data-tab="analytics" data-i18n="analytics">
                 <i class="fas fa-chart-pie"></i> Analytics
             </button>
+            <button class="tab-btn" data-tab="material-calc" data-i18n="material_calculator">
+                <i class="fas fa-shapes"></i> Material Calculator
+            </button>
         </nav>
 
         <!-- Dashboard Tab -->
@@ -1699,6 +1702,222 @@
                             <span class="metric-label">Most Common Type</span>
                             <span class="metric-value" id="common-type">-</span>
                         </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Material Quantity Calculator Tab -->
+        <section id="material-calc" class="tab-content">
+            <div class="calc-container">
+                <div class="calc-header">
+                    <h2><i class="fas fa-shapes"></i> <span data-i18n="material_calculator">Material Quantity Calculator</span></h2>
+                    <p class="section-desc" data-i18n="calc_desc">Calculate exact material quantities for any construction work based on IS code standards.</p>
+                </div>
+
+                <div class="calc-form">
+                    <!-- Construction Type -->
+                    <div class="form-section">
+                        <h3 class="section-title"><i class="fas fa-hard-hat"></i> <span data-i18n="calc_construction_type">Construction Type</span></h3>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="calc-type" data-i18n="calc_construction_type">Construction Type *</label>
+                                <select id="calc-type" onchange="onCalcTypeChange()">
+                                    <option value="room">Room / Hall (RCC Roof)</option>
+                                    <option value="slab">RCC Slab / Roof</option>
+                                    <option value="wall">Brick Wall</option>
+                                    <option value="column">RCC Column</option>
+                                    <option value="footing">RCC Footing / Foundation</option>
+                                    <option value="road">Road / Pavement</option>
+                                    <option value="plastering">Plastering</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="calc-mix" data-i18n="calc_mix_ratio">Concrete Mix Ratio *</label>
+                                <select id="calc-mix" onchange="onMixChange()">
+                                    <option value="M7.5">M7.5 (1:4:8) - PCC / Lean Mix</option>
+                                    <option value="M10">M10 (1:3:6) - Foundation</option>
+                                    <option value="M15">M15 (1:2:4) - General Work</option>
+                                    <option value="M20" selected>M20 (1:1.5:3) - RCC Standard</option>
+                                    <option value="M25">M25 (1:1:2) - Heavy RCC</option>
+                                    <option value="custom">Custom Ratio</option>
+                                </select>
+                            </div>
+                        </div>
+                        <!-- Custom ratio inputs (hidden by default) -->
+                        <div class="form-grid custom-ratio-inputs hidden" id="custom-ratio-group">
+                            <div class="form-group">
+                                <label>Cement Part</label>
+                                <input type="number" id="calc-custom-cement" value="1" min="1" max="10">
+                            </div>
+                            <div class="form-group">
+                                <label>Sand Part</label>
+                                <input type="number" id="calc-custom-sand" value="1.5" min="0" max="20" step="0.5">
+                            </div>
+                            <div class="form-group">
+                                <label>Aggregate Part</label>
+                                <input type="number" id="calc-custom-agg" value="3" min="0" max="20" step="0.5">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Dimensions -->
+                    <div class="form-section">
+                        <h3 class="section-title"><i class="fas fa-ruler-combined"></i> <span data-i18n="calc_dimensions">Dimensions</span></h3>
+                        <div class="form-grid" id="calc-dimensions">
+                            <div class="form-group" id="calc-length-group">
+                                <label for="calc-length" data-i18n="calc_length">Length (meters) *</label>
+                                <input type="number" id="calc-length" value="5" min="0.1" step="0.1">
+                            </div>
+                            <div class="form-group" id="calc-width-group">
+                                <label for="calc-width" data-i18n="calc_width">Width (meters) *</label>
+                                <input type="number" id="calc-width" value="4" min="0.1" step="0.1">
+                            </div>
+                            <div class="form-group" id="calc-height-group">
+                                <label for="calc-height" data-i18n="calc_height">Height (meters)</label>
+                                <input type="number" id="calc-height" value="3" min="0.1" step="0.1">
+                            </div>
+                            <div class="form-group" id="calc-thickness-group">
+                                <label for="calc-thickness" data-i18n="calc_thickness">Thickness (mm)</label>
+                                <input type="number" id="calc-thickness" value="150" min="50" step="10">
+                            </div>
+                            <div class="form-group hidden" id="calc-wall-thickness-group">
+                                <label for="calc-wall-thickness">Wall Thickness</label>
+                                <select id="calc-wall-thickness">
+                                    <option value="115">Half Brick (115mm / 4.5 inch)</option>
+                                    <option value="230" selected>Full Brick (230mm / 9 inch)</option>
+                                </select>
+                            </div>
+                            <div class="form-group hidden" id="calc-num-items-group">
+                                <label for="calc-num-items">Number of Items</label>
+                                <input type="number" id="calc-num-items" value="4" min="1" max="500">
+                            </div>
+                            <div class="form-group" id="calc-plaster-thickness-group" style="display:none;">
+                                <label for="calc-plaster-thickness">Plaster Thickness (mm)</label>
+                                <select id="calc-plaster-thickness">
+                                    <option value="12" selected>12mm (Interior)</option>
+                                    <option value="20">20mm (Exterior)</option>
+                                    <option value="25">25mm (Rough Surface)</option>
+                                </select>
+                            </div>
+                            <div class="form-group" id="calc-steel-percent-group">
+                                <label for="calc-steel-percent">Steel Reinforcement (%)</label>
+                                <input type="number" id="calc-steel-percent" value="1" min="0" max="8" step="0.1">
+                                <small class="hint">Slab: 1%, Column: 2.5%, Footing: 0.8%</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Calculate Buttons -->
+                    <div class="form-actions-main">
+                        <button type="button" class="btn btn-primary btn-lg" onclick="performCalculation()">
+                            <i class="fas fa-calculator"></i> <span data-i18n="calc_calculate">Calculate Quantities</span>
+                        </button>
+                        <button type="button" class="btn btn-secondary" onclick="clearCalcResults()">
+                            <i class="fas fa-redo"></i> <span data-i18n="calc_clear">Clear</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Results Section -->
+                <div id="calc-results" class="calc-results hidden">
+                    <div class="calc-results-header">
+                        <h3><i class="fas fa-clipboard-list"></i> <span data-i18n="calc_results">Calculation Results</span></h3>
+                        <div class="calc-work-info" id="calc-work-info"></div>
+                    </div>
+
+                    <!-- Quantity Table -->
+                    <div class="table-container">
+                        <table class="rates-table" id="calc-qty-table">
+                            <thead>
+                                <tr>
+                                    <th>Material</th>
+                                    <th>Quantity</th>
+                                    <th>Unit</th>
+                                </tr>
+                            </thead>
+                            <tbody id="calc-qty-tbody">
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Cost Estimate -->
+                    <div class="calc-cost-section" id="calc-cost-section">
+                        <h3><i class="fas fa-rupee-sign"></i> <span data-i18n="calc_cost_estimate">Estimated Material Cost</span></h3>
+                        <div class="table-container">
+                            <table class="rates-table" id="calc-cost-table">
+                                <thead>
+                                    <tr>
+                                        <th>Material</th>
+                                        <th>Quantity</th>
+                                        <th>Rate (Rs.)</th>
+                                        <th>Amount (Rs.)</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="calc-cost-tbody">
+                                </tbody>
+                                <tfoot>
+                                    <tr class="grand-total-row">
+                                        <td colspan="3"><strong>TOTAL MATERIAL COST</strong></td>
+                                        <td><strong id="calc-grand-total">Rs. 0</strong></td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                        <p class="calc-note"><i class="fas fa-info-circle"></i> <span data-i18n="calc_wastage_note">Quantities include 5% wastage allowance. Rates based on current market prices.</span></p>
+                    </div>
+
+                    <!-- Add to Summary -->
+                    <div class="calc-summary-actions">
+                        <button type="button" class="btn btn-primary" onclick="addToCalcSummary()">
+                            <i class="fas fa-plus-circle"></i> <span data-i18n="calc_add_to_summary">Add to Summary</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Multi-Item Summary -->
+                <div id="calc-summary" class="calc-summary-section hidden">
+                    <div class="calc-summary-header">
+                        <h3><i class="fas fa-list-alt"></i> <span data-i18n="calc_summary">Material Summary (All Items)</span></h3>
+                        <div>
+                            <button class="btn btn-secondary btn-sm" onclick="printCalcSummary()">
+                                <i class="fas fa-print"></i> Print
+                            </button>
+                            <button class="btn btn-secondary btn-sm" onclick="clearCalcSummary()">
+                                <i class="fas fa-trash"></i> Clear All
+                            </button>
+                        </div>
+                    </div>
+                    <div class="table-container">
+                        <table class="rates-table" id="calc-summary-table">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Work Item</th>
+                                    <th>Cement (bags)</th>
+                                    <th>Sand (cum)</th>
+                                    <th>Aggregate (cum)</th>
+                                    <th>Steel (kg)</th>
+                                    <th>Bricks (nos)</th>
+                                    <th>Est. Cost (Rs.)</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="calc-summary-tbody">
+                            </tbody>
+                            <tfoot>
+                                <tr class="grand-total-row">
+                                    <td colspan="2"><strong>GRAND TOTAL</strong></td>
+                                    <td id="summary-total-cement"><strong>0</strong></td>
+                                    <td id="summary-total-sand"><strong>0</strong></td>
+                                    <td id="summary-total-agg"><strong>0</strong></td>
+                                    <td id="summary-total-steel"><strong>0</strong></td>
+                                    <td id="summary-total-bricks"><strong>0</strong></td>
+                                    <td id="summary-total-cost"><strong>Rs. 0</strong></td>
+                                    <td></td>
+                                </tr>
+                            </tfoot>
+                        </table>
                     </div>
                 </div>
             </div>

@@ -1595,6 +1595,140 @@ footer p {
     }
 }
 
+/* ==================== Material Quantity Calculator ==================== */
+.calc-container {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.calc-header {
+    margin-bottom: 24px;
+}
+
+.calc-header h2 {
+    color: var(--primary-color, #1a5276);
+    margin-bottom: 8px;
+}
+
+.calc-header .section-desc {
+    color: #666;
+    font-size: 14px;
+}
+
+.calc-form {
+    margin-bottom: 24px;
+}
+
+.calc-results {
+    margin-top: 24px;
+}
+
+.calc-results-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.calc-results-header h3 {
+    color: var(--primary-color, #1a5276);
+    margin: 0;
+}
+
+.calc-work-info {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.calc-work-info .info-badge {
+    background: #e8f4fd;
+    color: #1a5276;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 500;
+}
+
+.calc-cost-section {
+    margin-top: 24px;
+}
+
+.calc-cost-section h3 {
+    color: #155724;
+    margin-bottom: 12px;
+}
+
+.calc-note {
+    margin-top: 12px;
+    font-size: 13px;
+    color: #666;
+    font-style: italic;
+}
+
+.grand-total-row {
+    background: #f0f9f0 !important;
+    font-size: 15px;
+}
+
+.grand-total-row td {
+    border-top: 2px solid #28a745 !important;
+    color: #155724;
+}
+
+.calc-summary-actions {
+    margin-top: 16px;
+    text-align: center;
+}
+
+.calc-summary-section {
+    margin-top: 32px;
+    border: 2px solid #1a5276;
+    border-radius: 12px;
+    padding: 20px;
+    background: #f8f9fa;
+}
+
+.calc-summary-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.calc-summary-header h3 {
+    color: var(--primary-color, #1a5276);
+    margin: 0;
+}
+
+.calc-summary-header .btn-sm {
+    padding: 4px 12px;
+    font-size: 13px;
+}
+
+.custom-ratio-inputs {
+    margin-top: 12px;
+    padding: 12px;
+    background: #fff8e1;
+    border-radius: 8px;
+    border: 1px solid #ffc107;
+}
+
+#calc-qty-table tr td:nth-child(2),
+#calc-cost-table tr td:nth-child(4),
+#calc-cost-table tr td:nth-child(3) {
+    text-align: right;
+    font-weight: 600;
+}
+
+#calc-summary-table td:nth-child(n+3):nth-child(-n+8) {
+    text-align: center;
+}
+
 /* Print Styles */
 @media print {
     .tabs,
