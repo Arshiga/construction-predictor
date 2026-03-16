@@ -1,1 +1,1 @@
-from app.routes import predictions, projects
+from app.routes import predictions, projects, admin

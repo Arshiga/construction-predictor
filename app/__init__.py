@@ -20,9 +20,11 @@ def create_app(config_class=Config):
     db.init_app(app)
 
     from app.routes import predictions, projects, rates
+    from app.routes import admin
     app.register_blueprint(predictions.bp)
     app.register_blueprint(projects.bp)
     app.register_blueprint(rates.bp)
+    app.register_blueprint(admin.bp)
 
     from app.routes.main import main_bp
     app.register_blueprint(main_bp)
