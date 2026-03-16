@@ -782,6 +782,9 @@ function displayBOQResult(result) {
     document.querySelector('.optimization-section')?.setAttribute('style', 'display:none');
     document.getElementById('ai-optimizer-section')?.setAttribute('style', 'display:none');
 
+    // Ensure feedback section stays visible
+    document.getElementById('feedback-section')?.removeAttribute('style');
+
     // Display project header
     const projectHeader = document.getElementById('result-project-name');
     const projectTitle = document.getElementById('result-project-title');
@@ -871,8 +874,11 @@ function displayBOQResult(result) {
     // Calculate and display profit analysis
     displayProfitAnalysis(result);
 
-    // Scroll to results
+    // Scroll to results, then nudge to feedback after a moment
     resultContainer.scrollIntoView({ behavior: 'smooth' });
+    setTimeout(() => {
+        document.getElementById('feedback-section')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }, 1500);
 }
 
 // Display Profit Analysis for Contractors
@@ -1119,8 +1125,11 @@ function displayPredictionResult(result) {
     // Calculate and display profit analysis (for ML predictions too)
     displayProfitAnalysis(result);
 
-    // Scroll to results
+    // Scroll to results, then nudge to feedback after a moment
     resultContainer.scrollIntoView({ behavior: 'smooth' });
+    setTimeout(() => {
+        document.getElementById('feedback-section')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }, 1500);
 }
 
 function displayCostBreakdown(totalCost, projectType) {
