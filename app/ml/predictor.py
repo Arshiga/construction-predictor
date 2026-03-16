@@ -21,6 +21,14 @@ class CostDelayPredictor:
                          'num_bathrooms', 'electrical_load_kw']
     BOOLEAN_FEATURES = ['has_basement']
 
+    # Minimum cost per sqft floors to prevent negative/unrealistic predictions
+    MIN_COST_PER_SQFT = {
+        'residential': {'economy': 1400, 'standard': 1800, 'premium': 2400},
+        'commercial': {'economy': 1800, 'standard': 2400, 'premium': 3200},
+        'industrial': {'economy': 1200, 'standard': 1800, 'premium': 2600},
+        'infrastructure': {'economy': 2000, 'standard': 2800, 'premium': 3800},
+    }
+
     def __init__(self, model_dir='trained_models'):
         self.model_dir = model_dir
         self.cost_model = None
@@ -52,6 +60,20 @@ class CostDelayPredictor:
             print("Models loaded successfully!")
         else:
             print("No pre-trained models found. Please train the models first.")
+
+    def _get_cost_floor(self, project_data: dict) -> float:
+        """Calculate minimum realistic cost based on project parameters"""
+        project_type = project_data.get('project_type', 'residential')
+        quality = project_data.get('material_quality', 'standard')
+        total_area = project_data.get('total_area_sqft', 1000)
+        num_floors = project_data.get('num_floors', 1)
+
+        type_floors = self.MIN_COST_PER_SQFT.get(project_type, self.MIN_COST_PER_SQFT['residential'])
+        min_rate = type_floors.get(quality, type_floors['standard'])
+
+        # Account for multi-floor premium
+        floor_factor = 1 + (num_floors - 1) * 0.08
+        return total_area * min_rate * floor_factor
 
     def _preprocess_features(self, data: dict) -> np.ndarray:
         """Convert input data to feature array for prediction"""
@@ -106,11 +128,18 @@ class CostDelayPredictor:
         predicted_cost = float(self.cost_model.predict(features)[0])
         predicted_delay = float(self.delay_model.predict(features)[0])
 
+        # Enforce minimum realistic cost to prevent negative/absurd predictions
+        cost_floor = self._get_cost_floor(project_data)
+        predicted_cost = max(predicted_cost, cost_floor)
+
         # Calculate delay probability
         if self.delay_prob_model:
             delay_probability = float(self.delay_prob_model.predict_proba(features)[0][1])
         else:
             delay_probability = min(1.0, max(0.0, predicted_delay / project_data.get('planned_duration_days', 100)))
+
+        # Ensure delay is non-negative
+        predicted_delay = max(0, predicted_delay)
 
         # Calculate confidence intervals (using ensemble variance if available)
         cost_std = predicted_cost * 0.15  # 15% standard deviation estimate
@@ -126,10 +155,10 @@ class CostDelayPredictor:
 
         return {
             'predicted_cost': round(predicted_cost, 2),
-            'predicted_delay_days': round(max(0, predicted_delay), 1),
+            'predicted_delay_days': round(predicted_delay, 1),
             'delay_probability': round(delay_probability, 3),
             'risk_score': round(risk_score, 1),
-            'cost_lower_bound': round(predicted_cost - 1.96 * cost_std, 2),
+            'cost_lower_bound': round(max(cost_floor * 0.85, predicted_cost - 1.96 * cost_std), 2),
             'cost_upper_bound': round(predicted_cost + 1.96 * cost_std, 2),
             'delay_lower_bound': round(max(0, predicted_delay - 1.96 * delay_std), 1),
             'delay_upper_bound': round(predicted_delay + 1.96 * delay_std, 1),
