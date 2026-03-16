@@ -1,0 +1,132 @@
+{
+  "prices": {
+    "steel_tmt_fe500": {
+      "price": 73.08,
+      "unit": "kg",
+      "change": 1.08,
+      "change_percent": 1.5,
+      "trend": "up",
+      "source": "Market Index",
+      "timestamp": "2026-03-16T13:10:41.355132"
+    },
+    "steel_tmt_fe550": {
+      "price": 79.17,
+      "unit": "kg",
+      "change": 1.17,
+      "change_percent": 1.5,
+      "trend": "up",
+      "source": "Market Index",
+      "timestamp": "2026-03-16T13:10:41.355411"
+    },
+    "steel_structural": {
+      "price": 76.12,
+      "unit": "kg",
+      "change": 1.12,
+      "change_percent": 1.49,
+      "trend": "up",
+      "source": "Market Index",
+      "timestamp": "2026-03-16T13:10:41.355428"
+    },
+    "cement_opc_43": {
+      "price": 381.9,
+      "unit": "bag (50kg)",
+      "change": 1.9,
+      "change_percent": 0.5,
+      "trend": "up",
+      "source": "Market Index",
+      "timestamp": "2026-03-16T13:10:43.343315"
+    },
+    "cement_opc_53": {
+      "price": 402.0,
+      "unit": "bag (50kg)",
+      "change": 2.0,
+      "change_percent": 0.5,
+      "trend": "up",
+      "source": "Market Index",
+      "timestamp": "2026-03-16T13:10:43.343339"
+    },
+    "cement_ppc": {
+      "price": 371.85,
+      "unit": "bag (50kg)",
+      "change": 1.85,
+      "change_percent": 0.5,
+      "trend": "up",
+      "source": "Market Index",
+      "timestamp": "2026-03-16T13:10:43.343349"
+    },
+    "river_sand": {
+      "price": 2298.56,
+      "unit": "cum",
+      "change": 98.56,
+      "change_percent": 4.48,
+      "trend": "up",
+      "source": "Regional Survey",
+      "timestamp": "2026-03-16T13:10:43.346773"
+    },
+    "m_sand": {
+      "price": 1567.2,
+      "unit": "cum",
+      "change": 67.2,
+      "change_percent": 4.48,
+      "trend": "up",
+      "source": "Regional Survey",
+      "timestamp": "2026-03-16T13:10:43.346808"
+    },
+    "aggregate_20mm": {
+      "price": 1880.64,
+      "unit": "cum",
+      "change": 80.64,
+      "change_percent": 4.48,
+      "trend": "up",
+      "source": "Regional Survey",
+      "timestamp": "2026-03-16T13:10:43.346823"
+    },
+    "aggregate_40mm": {
+      "price": 1776.16,
+      "unit": "cum",
+      "change": 76.16,
+      "change_percent": 4.48,
+      "trend": "up",
+      "source": "Regional Survey",
+      "timestamp": "2026-03-16T13:10:43.346835"
+    },
+    "brick_first_class": {
+      "price": 8457.92,
+      "unit": "per 1000",
+      "change": -42.08,
+      "change_percent": -0.5,
+      "trend": "down",
+      "source": "Market Survey",
+      "timestamp": "2026-03-16T13:10:43.346867"
+    },
+    "fly_ash_brick": {
+      "price": 5472.77,
+      "unit": "per 1000",
+      "change": -27.23,
+      "change_percent": -0.5,
+      "trend": "down",
+      "source": "Market Survey",
+      "timestamp": "2026-03-16T13:10:43.346883"
+    },
+    "aac_block": {
+      "price": 3980.2,
+      "unit": "cum",
+      "change": -19.8,
+      "change_percent": -0.5,
+      "trend": "down",
+      "source": "Market Survey",
+      "timestamp": "2026-03-16T13:10:43.346896"
+    },
+    "bitumen_vg30": {
+      "price": 48682.8,
+      "unit": "MT",
+      "change": 1182.8,
+      "change_percent": 2.49,
+      "trend": "up",
+      "source": "Commodity Index",
+      "timestamp": "2026-03-16T13:10:43.346918"
+    }
+  },
+  "last_updated": "2026-03-16T13:10:43.346975",
+  "source": "live"
+}

@@ -1,0 +1,8 @@
+__pycache__/
+*.pyc
+*.db
+*.zip
+*.pdf
+trained_models/
+.claude/
+logs/
