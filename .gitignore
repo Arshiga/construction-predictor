@@ -1,8 +1,11 @@
 __pycache__/
 *.pyc
+*.pyo
 *.db
 *.zip
 *.pdf
+.env
 trained_models/
 .claude/
 logs/
+nul

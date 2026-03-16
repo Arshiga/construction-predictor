@@ -1,0 +1,804 @@
+{
+  "last_updated": "2026-01-23",
+  "version": "2024-25",
+  "materials": {
+    "cement_opc_43": {
+      "name": "OPC 43 Grade Cement",
+      "category": "cement",
+      "unit": "Bag (50kg)",
+      "brand_rates": {
+        "UltraTech": 390,
+        "ACC": 385,
+        "Ambuja": 380,
+        "Shree": 370,
+        "Birla": 375,
+        "Average": 380
+      },
+      "regional_rates": {
+        "north": 375,
+        "south": 385,
+        "west": 390,
+        "east": 370,
+        "central": 365,
+        "northeast": 420
+      },
+      "history": [
+        {
+          "date": "2024-01-01",
+          "rate": 360
+        },
+        {
+          "date": "2024-02-01",
+          "rate": 365
+        },
+        {
+          "date": "2024-03-01",
+          "rate": 368
+        },
+        {
+          "date": "2024-04-01",
+          "rate": 372
+        },
+        {
+          "date": "2024-05-01",
+          "rate": 375
+        },
+        {
+          "date": "2024-06-01",
+          "rate": 378
+        },
+        {
+          "date": "2024-07-01",
+          "rate": 380
+        },
+        {
+          "date": "2024-08-01",
+          "rate": 382
+        },
+        {
+          "date": "2024-09-01",
+          "rate": 380
+        },
+        {
+          "date": "2024-10-01",
+          "rate": 378
+        },
+        {
+          "date": "2024-11-01",
+          "rate": 380
+        },
+        {
+          "date": "2024-12-01",
+          "rate": 380
+        }
+      ],
+      "alert_threshold": 5
+    },
+    "cement_opc_53": {
+      "name": "OPC 53 Grade Cement",
+      "category": "cement",
+      "unit": "Bag (50kg)",
+      "brand_rates": {
+        "UltraTech": 410,
+        "ACC": 405,
+        "Ambuja": 400,
+        "Shree": 390,
+        "Average": 400
+      },
+      "regional_rates": {
+        "north": 395,
+        "south": 405,
+        "west": 410,
+        "east": 390,
+        "central": 385,
+        "northeast": 440
+      },
+      "history": [
+        {
+          "date": "2024-01-01",
+          "rate": 380
+        },
+        {
+          "date": "2024-06-01",
+          "rate": 390
+        },
+        {
+          "date": "2024-12-01",
+          "rate": 400
+        }
+      ],
+      "alert_threshold": 5
+    },
+    "cement_ppc": {
+      "name": "PPC (Portland Pozzolana Cement)",
+      "category": "cement",
+      "unit": "Bag (50kg)",
+      "brand_rates": {
+        "UltraTech": 375,
+        "ACC": 370,
+        "Ambuja": 365,
+        "Average": 370
+      },
+      "regional_rates": {
+        "north": 365,
+        "south": 375,
+        "west": 380,
+        "east": 360,
+        "central": 355,
+        "northeast": 410
+      },
+      "history": [
+        {
+          "date": "2024-01-01",
+          "rate": 350
+        },
+        {
+          "date": "2024-06-01",
+          "rate": 360
+        },
+        {
+          "date": "2024-12-01",
+          "rate": 370
+        }
+      ],
+      "alert_threshold": 5
+    },
+    "steel_tmt_fe500": {
+      "name": "TMT Steel Fe500 Grade",
+      "category": "steel",
+      "unit": "Kg",
+      "brand_rates": {
+        "TATA Tiscon": 75,
+        "SAIL": 72,
+        "JSW": 73,
+        "Jindal": 71,
+        "Kamdhenu": 70,
+        "Average": 72
+      },
+      "regional_rates": {
+        "north": 72,
+        "south": 74,
+        "west": 73,
+        "east": 70,
+        "central": 71,
+        "northeast": 78
+      },
+      "history": [
+        {
+          "date": "2024-01-01",
+          "rate": 68
+        },
+        {
+          "date": "2024-02-01",
+          "rate": 69
+        },
+        {
+          "date": "2024-03-01",
+          "rate": 70
+        },
+        {
+          "date": "2024-04-01",
+          "rate": 71
+        },
+        {
+          "date": "2024-05-01",
+          "rate": 72
+        },
+        {
+          "date": "2024-06-01",
+          "rate": 73
+        },
+        {
+          "date": "2024-07-01",
+          "rate": 74
+        },
+        {
+          "date": "2024-08-01",
+          "rate": 73
+        },
+        {
+          "date": "2024-09-01",
+          "rate": 72
+        },
+        {
+          "date": "2024-10-01",
+          "rate": 71
+        },
+        {
+          "date": "2024-11-01",
+          "rate": 72
+        },
+        {
+          "date": "2024-12-01",
+          "rate": 72
+        }
+      ],
+      "alert_threshold": 3
+    },
+    "steel_tmt_fe550": {
+      "name": "TMT Steel Fe550 Grade",
+      "category": "steel",
+      "unit": "Kg",
+      "brand_rates": {
+        "TATA Tiscon": 82,
+        "SAIL": 78,
+        "JSW": 80,
+        "Average": 78
+      },
+      "regional_rates": {
+        "north": 78,
+        "south": 80,
+        "west": 79,
+        "east": 76,
+        "central": 77,
+        "northeast": 85
+      },
+      "history": [
+        {
+          "date": "2024-01-01",
+          "rate": 74
+        },
+        {
+          "date": "2024-06-01",
+          "rate": 76
+        },
+        {
+          "date": "2024-12-01",
+          "rate": 78
+        }
+      ],
+      "alert_threshold": 3
+    },
+    "steel_structural": {
+      "name": "Structural Steel (Angles, Channels)",
+      "category": "steel",
+      "unit": "Kg",
+      "brand_rates": {
+        "SAIL": 75,
+        "JSW": 76,
+        "Average": 75
+      },
+      "regional_rates": {
+        "north": 75,
+        "south": 77,
+        "west": 76,
+        "east": 73,
+        "central": 74,
+        "northeast": 82
+      },
+      "history": [
+        {
+          "date": "2024-01-01",
+          "rate": 72
+        },
+        {
+          "date": "2024-06-01",
+          "rate": 74
+        },
+        {
+          "date": "2024-12-01",
+          "rate": 75
+        }
+      ],
+      "alert_threshold": 3
+    },
+    "aggregate_20mm": {
+      "name": "Coarse Aggregate 20mm",
+      "category": "aggregates",
+      "unit": "Cubic Meter",
+      "brand_rates": {
+        "Average": 1800
+      },
+      "regional_rates": {
+        "north": 1700,
+        "south": 1900,
+        "west": 1850,
+        "east": 1600,
+        "central": 1550,
+        "northeast": 2200
+      },
+      "history": [
+        {
+          "date": "2024-01-01",
+          "rate": 1700
+        },
+        {
+          "date": "2024-06-01",
+          "rate": 1750
+        },
+        {
+          "date": "2024-12-01",
+          "rate": 1800
+        }
+      ],
+      "alert_threshold": 8
+    },
+    "aggregate_40mm": {
+      "name": "Coarse Aggregate 40mm",
+      "category": "aggregates",
+      "unit": "Cubic Meter",
+      "brand_rates": {
+        "Average": 1700
+      },
+      "regional_rates": {
+        "north": 1600,
+        "south": 1800,
+        "west": 1750,
+        "east": 1500,
+        "central": 1450,
+        "northeast": 2100
+      },
+      "history": [
+        {
+          "date": "2024-01-01",
+          "rate": 1600
+        },
+        {
+          "date": "2024-06-01",
+          "rate": 1650
+        },
+        {
+          "date": "2024-12-01",
+          "rate": 1700
+        }
+      ],
+      "alert_threshold": 8
+    },
+    "river_sand": {
+      "name": "River Sand (Fine Aggregate)",
+      "category": "aggregates",
+      "unit": "Cubic Meter",
+      "brand_rates": {
+        "Average": 2200
+      },
+      "regional_rates": {
+        "north": 2000,
+        "south": 2500,
+        "west": 2300,
+        "east": 1800,
+        "central": 1900,
+        "northeast": 2800
+      },
+      "history": [
+        {
+          "date": "2024-01-01",
+          "rate": 2000
+        },
+        {
+          "date": "2024-06-01",
+          "rate": 2100
+        },
+        {
+          "date": "2024-12-01",
+          "rate": 2200
+        }
+      ],
+      "alert_threshold": 10
+    },
+    "m_sand": {
+      "name": "M-Sand (Manufactured Sand)",
+      "category": "aggregates",
+      "unit": "Cubic Meter",
+      "brand_rates": {
+        "Average": 1500
+      },
+      "regional_rates": {
+        "north": 1400,
+        "south": 1600,
+        "west": 1550,
+        "east": 1300,
+        "central": 1350,
+        "northeast": 1800
+      },
+      "history": [
+        {
+          "date": "2024-01-01",
+          "rate": 1400
+        },
+        {
+          "date": "2024-06-01",
+          "rate": 1450
+        },
+        {
+          "date": "2024-12-01",
+          "rate": 1500
+        }
+      ],
+      "alert_threshold": 8
+    },
+    "brick_first_class": {
+      "name": "First Class Bricks",
+      "category": "bricks",
+      "unit": "Per 1000 Nos",
+      "brand_rates": {
+        "Average": 8500
+      },
+      "regional_rates": {
+        "north": 8000,
+        "south": 9000,
+        "west": 8500,
+        "east": 7500,
+        "central": 7000,
+        "northeast": 10000
+      },
+      "history": [
+        {
+          "date": "2024-01-01",
+          "rate": 8000
+        },
+        {
+          "date": "2024-06-01",
+          "rate": 8200
+        },
+        {
+          "date": "2024-12-01",
+          "rate": 8500
+        }
+      ],
+      "alert_threshold": 5
+    },
+    "fly_ash_brick": {
+      "name": "Fly Ash Bricks",
+      "category": "bricks",
+      "unit": "Per 1000 Nos",
+      "brand_rates": {
+        "Average": 5500
+      },
+      "regional_rates": {
+        "north": 5200,
+        "south": 5800,
+        "west": 5500,
+        "east": 5000,
+        "central": 4800,
+        "northeast": 6500
+      },
+      "history": [
+        {
+          "date": "2024-01-01",
+          "rate": 5200
+        },
+        {
+          "date": "2024-06-01",
+          "rate": 5400
+        },
+        {
+          "date": "2024-12-01",
+          "rate": 5500
+        }
+      ],
+      "alert_threshold": 5
+    },
+    "aac_block": {
+      "name": "AAC Blocks",
+      "category": "bricks",
+      "unit": "Cubic Meter",
+      "brand_rates": {
+        "Ultratech": 4200,
+        "Magicrete": 4000,
+        "Average": 4100.0
+      },
+      "regional_rates": {
+        "north": 3997.5,
+        "south": 4305.0,
+        "west": 4202.5,
+        "east": 3895.0,
+        "central": 3792.5,
+        "northeast": 4920.0
+      },
+      "history": [
+        {
+          "date": "2024-01-01",
+          "rate": 3800
+        },
+        {
+          "date": "2024-06-01",
+          "rate": 3900
+        },
+        {
+          "date": "2024-12-01",
+          "rate": 4000
+        },
+        {
+          "date": "2026-01-23",
+          "rate": 4100.03
+        },
+        {
+          "date": "2026-01-23",
+          "rate": 4100.0
+        },
+        {
+          "date": "2026-01-23",
+          "rate": 4100.0
+        },
+        {
+          "date": "2026-01-23",
+          "rate": 4100.99
+        },
+        {
+          "date": "2026-01-23",
+          "rate": 4100.0
+        }
+      ],
+      "alert_threshold": 5
+    },
+    "bitumen_vg30": {
+      "name": "Bitumen VG-30",
+      "category": "aggregates",
+      "unit": "MT (Metric Ton)",
+      "brand_rates": {
+        "IOCL": 48000,
+        "BPCL": 47500,
+        "HPCL": 47800,
+        "Average": 47500
+      },
+      "regional_rates": {
+        "north": 47000,
+        "south": 48000,
+        "west": 47500,
+        "east": 46500,
+        "central": 46000,
+        "northeast": 52000
+      },
+      "history": [
+        {
+          "date": "2024-01-01",
+          "rate": 45000
+        },
+        {
+          "date": "2024-06-01",
+          "rate": 46500
+        },
+        {
+          "date": "2024-12-01",
+          "rate": 47500
+        }
+      ],
+      "alert_threshold": 5
+    }
+  },
+  "labor": {
+    "unskilled": {
+      "name": "Unskilled Labor (Mazdoor/Beldar)",
+      "unit": "Per Day",
+      "regional_rates": {
+        "north": 550,
+        "south": 600,
+        "west": 580,
+        "east": 500,
+        "central": 480,
+        "northeast": 520
+      },
+      "history": [
+        {
+          "date": "2024-01-01",
+          "rate": 500
+        },
+        {
+          "date": "2024-06-01",
+          "rate": 530
+        },
+        {
+          "date": "2024-12-01",
+          "rate": 550
+        }
+      ],
+      "min_wage_ref": "Minimum Wages Act"
+    },
+    "mason": {
+      "name": "Mason (Raj Mistri)",
+      "unit": "Per Day",
+      "regional_rates": {
+        "north": 850,
+        "south": 900,
+        "west": 880,
+        "east": 750,
+        "central": 720,
+        "northeast": 780
+      },
+      "history": [
+        {
+          "date": "2024-01-01",
+          "rate": 800
+        },
+        {
+          "date": "2024-06-01",
+          "rate": 830
+        },
+        {
+          "date": "2024-12-01",
+          "rate": 850
+        }
+      ]
+    },
+    "carpenter": {
+      "name": "Carpenter",
+      "unit": "Per Day",
+      "regional_rates": {
+        "north": 850,
+        "south": 900,
+        "west": 880,
+        "east": 750,
+        "central": 720,
+        "northeast": 780
+      },
+      "history": [
+        {
+          "date": "2024-01-01",
+          "rate": 800
+        },
+        {
+          "date": "2024-06-01",
+          "rate": 830
+        },
+        {
+          "date": "2024-12-01",
+          "rate": 850
+        }
+      ]
+    },
+    "plumber": {
+      "name": "Plumber",
+      "unit": "Per Day",
+      "regional_rates": {
+        "north": 800,
+        "south": 850,
+        "west": 830,
+        "east": 700,
+        "central": 680,
+        "northeast": 750
+      },
+      "history": [
+        {
+          "date": "2024-01-01",
+          "rate": 750
+        },
+        {
+          "date": "2024-06-01",
+          "rate": 780
+        },
+        {
+          "date": "2024-12-01",
+          "rate": 800
+        }
+      ]
+    },
+    "electrician": {
+      "name": "Electrician",
+      "unit": "Per Day",
+      "regional_rates": {
+        "north": 850,
+        "south": 900,
+        "west": 880,
+        "east": 750,
+        "central": 720,
+        "northeast": 780
+      },
+      "history": [
+        {
+          "date": "2024-01-01",
+          "rate": 800
+        },
+        {
+          "date": "2024-06-01",
+          "rate": 830
+        },
+        {
+          "date": "2024-12-01",
+          "rate": 850
+        }
+      ]
+    },
+    "bar_bender": {
+      "name": "Bar Bender (Sariya Mistri)",
+      "unit": "Per Day",
+      "regional_rates": {
+        "north": 800,
+        "south": 850,
+        "west": 830,
+        "east": 700,
+        "central": 680,
+        "northeast": 750
+      },
+      "history": [
+        {
+          "date": "2024-01-01",
+          "rate": 750
+        },
+        {
+          "date": "2024-06-01",
+          "rate": 780
+        },
+        {
+          "date": "2024-12-01",
+          "rate": 800
+        }
+      ]
+    },
+    "painter": {
+      "name": "Painter",
+      "unit": "Per Day",
+      "regional_rates": {
+        "north": 750,
+        "south": 800,
+        "west": 780,
+        "east": 650,
+        "central": 630,
+        "northeast": 700
+      },
+      "history": [
+        {
+          "date": "2024-01-01",
+          "rate": 700
+        },
+        {
+          "date": "2024-06-01",
+          "rate": 730
+        },
+        {
+          "date": "2024-12-01",
+          "rate": 750
+        }
+      ]
+    },
+    "welder": {
+      "name": "Welder",
+      "unit": "Per Day",
+      "regional_rates": {
+        "north": 900,
+        "south": 950,
+        "west": 930,
+        "east": 800,
+        "central": 780,
+        "northeast": 850
+      },
+      "history": [
+        {
+          "date": "2024-01-01",
+          "rate": 850
+        },
+        {
+          "date": "2024-06-01",
+          "rate": 880
+        },
+        {
+          "date": "2024-12-01",
+          "rate": 900
+        }
+      ]
+    },
+    "helper": {
+      "name": "Helper (Semi-skilled)",
+      "unit": "Per Day",
+      "regional_rates": {
+        "north": 600,
+        "south": 650,
+        "west": 630,
+        "east": 550,
+        "central": 520,
+        "northeast": 580
+      },
+      "history": [
+        {
+          "date": "2024-01-01",
+          "rate": 550
+        },
+        {
+          "date": "2024-06-01",
+          "rate": 580
+        },
+        {
+          "date": "2024-12-01",
+          "rate": 600
+        }
+      ]
+    }
+  },
+  "alerts": [],
+  "update_log": [
+    {
+      "date": "2026-01-23",
+      "action": "Database created",
+      "user": "system"
+    }
+  ]
+}
