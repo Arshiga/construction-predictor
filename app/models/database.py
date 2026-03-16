@@ -159,3 +159,23 @@ class Prediction(db.Model):
             'risk_factors': self.risk_factors,
             'created_at': self.created_at.isoformat() if self.created_at else None,
         }
+
+
+class Feedback(db.Model):
+    """Model for storing user feedback on predictions"""
+    __tablename__ = 'feedbacks'
+
+    id = db.Column(db.Integer, primary_key=True)
+    prediction_id = db.Column(db.Integer, db.ForeignKey('predictions.id'), nullable=False)
+    is_useful = db.Column(db.Boolean, nullable=False)
+    comment = db.Column(db.String(1000), nullable=True)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'prediction_id': self.prediction_id,
+            'is_useful': self.is_useful,
+            'comment': self.comment,
+            'created_at': self.created_at.isoformat() if self.created_at else None,
+        }

@@ -764,6 +764,9 @@ function displayBOQResult(result) {
     const resultContainer = document.getElementById('prediction-result');
     resultContainer.classList.remove('hidden');
 
+    // Reset feedback section for new prediction
+    resetFeedbackSection();
+
     // Show BOQ section, hide ML results
     const boqSection = document.getElementById('boq-section');
     const mlResultsGrid = document.getElementById('ml-results-grid');
@@ -990,6 +993,9 @@ function displayProfitAnalysis(result) {
 function displayPredictionResult(result) {
     const resultContainer = document.getElementById('prediction-result');
     resultContainer.classList.remove('hidden');
+
+    // Reset feedback section for new prediction
+    resetFeedbackSection();
 
     // Show ML sections, hide BOQ section
     const mlResultsGrid = document.getElementById('ml-results-grid');
@@ -3495,3 +3501,92 @@ function printCalcSummary() {
 function initMaterialCalc() {
     onCalcTypeChange();
 }
+
+// ============================================
+// FEEDBACK SECTION
+// ============================================
+let feedbackIsUseful = null;
+
+function resetFeedbackSection() {
+    feedbackIsUseful = null;
+    const section = document.getElementById('feedback-section');
+    if (!section) return;
+    document.getElementById('feedback-useful-btn').classList.remove('selected');
+    document.getElementById('feedback-not-useful-btn').classList.remove('selected');
+    document.getElementById('feedback-comment-area').classList.add('hidden');
+    document.getElementById('feedback-success').classList.add('hidden');
+    document.getElementById('feedback-body').style.display = '';
+    document.getElementById('feedback-comment').value = '';
+    document.getElementById('feedback-char-count').textContent = '0 / 1000';
+    // Re-enable buttons
+    document.getElementById('feedback-useful-btn').disabled = false;
+    document.getElementById('feedback-not-useful-btn').disabled = false;
+}
+
+function submitFeedback(isUseful) {
+    feedbackIsUseful = isUseful;
+
+    const usefulBtn = document.getElementById('feedback-useful-btn');
+    const notUsefulBtn = document.getElementById('feedback-not-useful-btn');
+
+    usefulBtn.classList.toggle('selected', isUseful);
+    notUsefulBtn.classList.toggle('selected', !isUseful);
+
+    // Show comment area
+    document.getElementById('feedback-comment-area').classList.remove('hidden');
+    document.getElementById('feedback-comment').focus();
+}
+
+async function submitFeedbackComment() {
+    const predictionId = window.lastPredictionResult?.prediction_id;
+    if (!predictionId) {
+        alert('No prediction to give feedback on.');
+        return;
+    }
+
+    const comment = document.getElementById('feedback-comment').value.trim();
+    const submitBtn = document.getElementById('feedback-submit-btn');
+
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Submitting...';
+
+    try {
+        const response = await fetch(`/api/predictions/${predictionId}/feedback`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                is_useful: feedbackIsUseful,
+                comment: comment
+            })
+        });
+
+        if (response.ok) {
+            // Hide form, show success
+            document.getElementById('feedback-comment-area').classList.add('hidden');
+            document.getElementById('feedback-useful-btn').disabled = true;
+            document.getElementById('feedback-not-useful-btn').disabled = true;
+            document.getElementById('feedback-success').classList.remove('hidden');
+        } else {
+            const err = await response.json();
+            alert('Failed to submit feedback: ' + (err.error || 'Unknown error'));
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Submit Feedback';
+        }
+    } catch (error) {
+        console.error('Feedback error:', error);
+        alert('Failed to submit feedback. Please try again.');
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Submit Feedback';
+    }
+}
+
+// Character count for feedback textarea
+document.addEventListener('DOMContentLoaded', function() {
+    const textarea = document.getElementById('feedback-comment');
+    if (textarea) {
+        textarea.addEventListener('input', function() {
+            document.getElementById('feedback-char-count').textContent =
+                this.value.length + ' / 1000';
+        });
+    }
+});

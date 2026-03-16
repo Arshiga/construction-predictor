@@ -1,6 +1,6 @@
 from flask import Blueprint, request, jsonify, send_file
 from app import db
-from app.models.database import Project, Prediction
+from app.models.database import Project, Prediction, Feedback
 from app.ml.predictor import CostDelayPredictor
 from app.ml.govt_estimator import GovtCostEstimator
 from app.services.pdf_generator import pdf_generator
@@ -391,3 +391,41 @@ def optimize_prediction(prediction_id):
     )
 
     return jsonify(result), 200
+
+
+@bp.route('/<int:prediction_id>/feedback', methods=['POST'])
+def submit_feedback(prediction_id):
+    """
+    Submit feedback for a prediction.
+
+    Expected JSON body:
+    {
+        "is_useful": true/false,
+        "comment": "optional comment text"
+    }
+    """
+    prediction = Prediction.query.get_or_404(prediction_id)
+    data = request.get_json()
+
+    if not data or 'is_useful' not in data:
+        return jsonify({'error': 'is_useful field is required'}), 400
+
+    feedback = Feedback(
+        prediction_id=prediction_id,
+        is_useful=data['is_useful'],
+        comment=data.get('comment', '').strip()[:1000]
+    )
+
+    db.session.add(feedback)
+    db.session.commit()
+
+    return jsonify(feedback.to_dict()), 201
+
+
+@bp.route('/<int:prediction_id>/feedback', methods=['GET'])
+def get_feedback(prediction_id):
+    """Get all feedback for a prediction"""
+    Prediction.query.get_or_404(prediction_id)
+    feedbacks = Feedback.query.filter_by(prediction_id=prediction_id)\
+        .order_by(Feedback.created_at.desc()).all()
+    return jsonify([f.to_dict() for f in feedbacks]), 200
