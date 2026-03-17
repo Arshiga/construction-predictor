@@ -143,7 +143,7 @@
                         <button class="btn-link" onclick="switchToTab('history')">View All</button>
                     </div>
                     <div class="recent-predictions-list" id="recent-predictions-list">
-                        <p class="empty-state">No predictions yet. Make your first prediction!</p>
+                        <p class="empty-state" data-i18n="no_predictions_yet">No predictions yet. Make your first prediction!</p>
                     </div>
                 </div>
 
@@ -199,12 +199,12 @@
                         <div class="region-selector">
                             <label for="rate-region"><i class="fas fa-map-marker-alt"></i> <span data-i18n="region">Region</span>:</label>
                             <select id="rate-region" onchange="loadRatesForRegion()">
-                                <option value="north">North India (Delhi, UP, Punjab)</option>
-                                <option value="south">South India (TN, Kerala, Karnataka)</option>
-                                <option value="west" selected>West India (Maharashtra, Gujarat)</option>
-                                <option value="east">East India (WB, Bihar, Odisha)</option>
-                                <option value="central">Central India (MP, Chhattisgarh)</option>
-                                <option value="northeast">North East India</option>
+                                <option value="north" data-i18n="north_india">North India (Delhi, UP, Punjab)</option>
+                                <option value="south" data-i18n="south_india">South India (TN, Kerala, Karnataka)</option>
+                                <option value="west" selected data-i18n="west_india">West India (Maharashtra, Gujarat)</option>
+                                <option value="east" data-i18n="east_india">East India (WB, Bihar, Odisha)</option>
+                                <option value="central" data-i18n="central_india">Central India (MP, Chhattisgarh)</option>
+                                <option value="northeast" data-i18n="northeast_india">North East India</option>
                             </select>
                         </div>
                         <button class="btn btn-primary" onclick="openReportPriceModal()" style="background:#28a745; border:none; color:white; padding:8px 16px; border-radius:6px; cursor:pointer; font-size:14px;">
@@ -224,7 +224,7 @@
                     <h3><i class="fas fa-bell"></i> <span data-i18n="price_alerts">Price Alerts</span> <span class="alert-count" id="alert-count">0</span></h3>
                     <div class="alerts-list" id="alerts-list">
                         <!-- Alerts will be populated dynamically -->
-                        <div class="no-alerts">No price alerts at this time</div>
+                        <div class="no-alerts" data-i18n="no_price_alerts">No price alerts at this time</div>
                     </div>
                 </div>
 
@@ -234,12 +234,12 @@
                     <div class="rate-card cement">
                         <div class="rate-card-header">
                             <i class="fas fa-cube"></i>
-                            <h4>Cement (OPC 43)</h4>
+                            <h4 data-i18n="cement_opc43">Cement (OPC 43)</h4>
                         </div>
                         <div class="rate-card-body">
                             <div class="current-rate">
                                 <span class="rate-value" id="cement-rate">Rs. 380</span>
-                                <span class="rate-unit">per bag (50kg)</span>
+                                <span class="rate-unit" data-i18n="per_bag_50kg">per bag (50kg)</span>
                             </div>
                             <div class="rate-trend" id="cement-trend">
                                 <i class="fas fa-arrow-up"></i>
@@ -257,12 +257,12 @@
                     <div class="rate-card steel">
                         <div class="rate-card-header">
                             <i class="fas fa-tools"></i>
-                            <h4>TMT Steel (Fe500)</h4>
+                            <h4 data-i18n="tmt_steel_fe500">TMT Steel (Fe500)</h4>
                         </div>
                         <div class="rate-card-body">
                             <div class="current-rate">
                                 <span class="rate-value" id="steel-rate">Rs. 72</span>
-                                <span class="rate-unit">per kg</span>
+                                <span class="rate-unit" data-i18n="per_kg">per kg</span>
                             </div>
                             <div class="rate-trend" id="steel-trend">
                                 <i class="fas fa-minus"></i>
@@ -280,12 +280,12 @@
                     <div class="rate-card sand">
                         <div class="rate-card-header">
                             <i class="fas fa-mountain"></i>
-                            <h4>River Sand</h4>
+                            <h4 data-i18n="river_sand">River Sand</h4>
                         </div>
                         <div class="rate-card-body">
                             <div class="current-rate">
                                 <span class="rate-value" id="sand-rate">Rs. 2,200</span>
-                                <span class="rate-unit">per cum</span>
+                                <span class="rate-unit" data-i18n="per_cum">per cum</span>
                             </div>
                             <div class="rate-trend" id="sand-trend">
                                 <i class="fas fa-arrow-up"></i>
@@ -301,7 +301,7 @@
                     <div class="rate-card aggregate">
                         <div class="rate-card-header">
                             <i class="fas fa-cubes"></i>
-                            <h4>Aggregate (20mm)</h4>
+                            <h4 data-i18n="aggregate_20mm">Aggregate (20mm)</h4>
                         </div>
                         <div class="rate-card-body">
                             <div class="current-rate">
@@ -319,12 +319,12 @@
                     <div class="rate-card bricks">
                         <div class="rate-card-header">
                             <i class="fas fa-th-large"></i>
-                            <h4>Bricks (1st Class)</h4>
+                            <h4 data-i18n="bricks_1st">Bricks (1st Class)</h4>
                         </div>
                         <div class="rate-card-body">
                             <div class="current-rate">
                                 <span class="rate-value" id="brick-rate">Rs. 8,500</span>
-                                <span class="rate-unit">per 1000 nos</span>
+                                <span class="rate-unit" data-i18n="per_1000_nos">per 1000 nos</span>
                             </div>
                             <div class="rate-trend" id="brick-trend">
                                 <i class="fas fa-minus"></i>
@@ -340,12 +340,12 @@
                     <div class="rate-card labor">
                         <div class="rate-card-header">
                             <i class="fas fa-hard-hat"></i>
-                            <h4>Mason (Skilled)</h4>
+                            <h4 data-i18n="mason_skilled">Mason (Skilled)</h4>
                         </div>
                         <div class="rate-card-body">
                             <div class="current-rate">
                                 <span class="rate-value" id="mason-rate">Rs. 850</span>
-                                <span class="rate-unit">per day</span>
+                                <span class="rate-unit" data-i18n="per_day">per day</span>
                             </div>
                             <div class="rate-trend" id="mason-trend">
                                 <i class="fas fa-arrow-up"></i>
@@ -392,17 +392,17 @@
                             <div style="margin-bottom:14px;">
                                 <label style="display:block; font-weight:600; margin-bottom:4px;" data-i18n="material_category">Material Category *</label>
                                 <select id="rp-category" required style="width:100%; padding:10px; border:1px solid #ddd; border-radius:8px; font-size:14px;">
-                                    <option value="">Select category</option>
-                                    <option value="cement">Cement</option>
-                                    <option value="steel">Steel / TMT</option>
-                                    <option value="sand">Sand</option>
-                                    <option value="aggregate">Aggregate / Gravel</option>
-                                    <option value="bricks">Bricks / Blocks</option>
-                                    <option value="wood">Wood / Timber</option>
-                                    <option value="paint">Paint</option>
-                                    <option value="tiles">Tiles / Flooring</option>
-                                    <option value="pipes">Pipes / Plumbing</option>
-                                    <option value="electrical">Electrical</option>
+                                    <option value="" data-i18n="select_category">Select category</option>
+                                    <option value="cement" data-i18n="cement_category">Cement</option>
+                                    <option value="steel" data-i18n="steel_tmt">Steel / TMT</option>
+                                    <option value="sand" data-i18n="sand_category">Sand</option>
+                                    <option value="aggregate" data-i18n="aggregate_gravel">Aggregate / Gravel</option>
+                                    <option value="bricks" data-i18n="bricks_blocks">Bricks / Blocks</option>
+                                    <option value="wood" data-i18n="wood_timber">Wood / Timber</option>
+                                    <option value="paint" data-i18n="paint_category">Paint</option>
+                                    <option value="tiles" data-i18n="tiles_flooring">Tiles / Flooring</option>
+                                    <option value="pipes" data-i18n="pipes_plumbing">Pipes / Plumbing</option>
+                                    <option value="electrical" data-i18n="electrical_category">Electrical</option>
                                 </select>
                             </div>
 
@@ -524,11 +524,11 @@
                     <h3><i class="fas fa-chart-line"></i> Price Trends (Last 12 Months)</h3>
                     <div class="trend-charts-grid">
                         <div class="trend-chart-card">
-                            <h4>Cement Price Trend</h4>
+                            <h4 data-i18n="cement_price_trend">Cement Price Trend</h4>
                             <canvas id="cementTrendChart"></canvas>
                         </div>
                         <div class="trend-chart-card">
-                            <h4>Steel Price Trend</h4>
+                            <h4 data-i18n="steel_price_trend">Steel Price Trend</h4>
                             <canvas id="steelTrendChart"></canvas>
                         </div>
                     </div>
@@ -566,11 +566,11 @@
                     <!-- Work Name Section - User Provided -->
                     <div class="work-name-section">
                         <div class="form-group work-name-group">
-                            <label for="work_name"><i class="fas fa-briefcase"></i> Work Name / Project Title *</label>
+                            <label for="work_name" data-i18n="work_name_label"><i class="fas fa-briefcase"></i> Work Name / Project Title *</label>
                             <input type="text" id="work_name" name="work_name" required
                                    placeholder="Enter the official work name (e.g., Construction of Community Hall at Village Rampur)"
                                    class="work-name-input">
-                            <small class="hint">Enter the exact work name as per tender/contract document</small>
+                            <small class="hint" data-i18n="work_name_hint">Enter the exact work name as per tender/contract document</small>
                         </div>
                         <div id="work-name-display" class="work-name-display hidden">
                             <i class="fas fa-bookmark"></i> <span id="work-name-text"></span>
@@ -582,52 +582,52 @@
                         <h3 class="section-title"><i class="fas fa-landmark"></i> Government Contract Details</h3>
                         <div class="form-grid">
                             <div class="form-group">
-                                <label for="tender_number">Tender/Contract Number</label>
+                                <label for="tender_number" data-i18n="tender_number">Tender/Contract Number</label>
                                 <input type="text" id="tender_number" name="tender_number" placeholder="e.g., PWD/2024/1234">
                             </div>
                             <div class="form-group">
-                                <label for="department">Department/Agency *</label>
+                                <label for="department" data-i18n="department_agency">Department/Agency *</label>
                                 <select id="department" name="department" required>
-                                    <option value="">Select Department</option>
-                                    <option value="PWD">Public Works Department (PWD)</option>
-                                    <option value="CPWD">Central PWD (CPWD)</option>
-                                    <option value="NHAI">National Highways Authority (NHAI)</option>
-                                    <option value="Railways">Indian Railways</option>
-                                    <option value="MES">Military Engineering Services (MES)</option>
-                                    <option value="Irrigation">Irrigation Department</option>
-                                    <option value="Rural_Dev">Rural Development</option>
-                                    <option value="Urban_Dev">Urban Development</option>
-                                    <option value="Panchayat">Panchayati Raj</option>
-                                    <option value="Municipal">Municipal Corporation</option>
-                                    <option value="Housing">Housing Board</option>
-                                    <option value="Education">Education Department</option>
-                                    <option value="Health">Health Department</option>
-                                    <option value="Other">Other Government Body</option>
+                                    <option value="" data-i18n="select_department">Select Department</option>
+                                    <option value="PWD" data-i18n="pwd">Public Works Department (PWD)</option>
+                                    <option value="CPWD" data-i18n="cpwd">Central PWD (CPWD)</option>
+                                    <option value="NHAI" data-i18n="nhai">National Highways Authority (NHAI)</option>
+                                    <option value="Railways" data-i18n="railways">Indian Railways</option>
+                                    <option value="MES" data-i18n="mes">Military Engineering Services (MES)</option>
+                                    <option value="Irrigation" data-i18n="irrigation">Irrigation Department</option>
+                                    <option value="Rural_Dev" data-i18n="rural_dev">Rural Development</option>
+                                    <option value="Urban_Dev" data-i18n="urban_dev">Urban Development</option>
+                                    <option value="Panchayat" data-i18n="panchayat">Panchayati Raj</option>
+                                    <option value="Municipal" data-i18n="municipal">Municipal Corporation</option>
+                                    <option value="Housing" data-i18n="housing_board">Housing Board</option>
+                                    <option value="Education" data-i18n="education_dept">Education Department</option>
+                                    <option value="Health" data-i18n="health_dept">Health Department</option>
+                                    <option value="Other" data-i18n="other_govt">Other Government Body</option>
                                 </select>
                             </div>
                             <div class="form-group">
-                                <label for="scheme_name">Scheme/Program Name</label>
+                                <label for="scheme_name" data-i18n="scheme_program">Scheme/Program Name</label>
                                 <select id="scheme_name" name="scheme_name">
-                                    <option value="">Select Scheme (if applicable)</option>
-                                    <option value="PMAY">Pradhan Mantri Awas Yojana (PMAY)</option>
-                                    <option value="PMGSY">Pradhan Mantri Gram Sadak Yojana (PMGSY)</option>
-                                    <option value="AMRUT">AMRUT Mission</option>
-                                    <option value="Smart_City">Smart City Mission</option>
-                                    <option value="Jal_Jeevan">Jal Jeevan Mission</option>
-                                    <option value="Swachh_Bharat">Swachh Bharat Mission</option>
-                                    <option value="MGNREGA">MGNREGA</option>
-                                    <option value="State_Scheme">State Government Scheme</option>
+                                    <option value="" data-i18n="select_scheme">Select Scheme (if applicable)</option>
+                                    <option value="PMAY" data-i18n="pmay">Pradhan Mantri Awas Yojana (PMAY)</option>
+                                    <option value="PMGSY" data-i18n="pmgsy">Pradhan Mantri Gram Sadak Yojana (PMGSY)</option>
+                                    <option value="AMRUT" data-i18n="amrut">AMRUT Mission</option>
+                                    <option value="Smart_City" data-i18n="smart_city">Smart City Mission</option>
+                                    <option value="Jal_Jeevan" data-i18n="jal_jeevan">Jal Jeevan Mission</option>
+                                    <option value="Swachh_Bharat" data-i18n="swachh_bharat">Swachh Bharat Mission</option>
+                                    <option value="MGNREGA" data-i18n="mgnrega">MGNREGA</option>
+                                    <option value="State_Scheme" data-i18n="state_scheme">State Government Scheme</option>
                                     <option value="Other">Other Scheme</option>
-                                    <option value="None">Not under any scheme</option>
+                                    <option value="None" data-i18n="no_scheme">Not under any scheme</option>
                                 </select>
                             </div>
                             <div class="form-group">
-                                <label for="contractor_class">Contractor Class/Category</label>
+                                <label for="contractor_class" data-i18n="contractor_class">Contractor Class/Category</label>
                                 <select id="contractor_class" name="contractor_class">
-                                    <option value="Class_A">Class A (Above 5 Cr)</option>
-                                    <option value="Class_B" selected>Class B (1-5 Cr)</option>
-                                    <option value="Class_C">Class C (25L-1 Cr)</option>
-                                    <option value="Class_D">Class D (Below 25L)</option>
+                                    <option value="Class_A" data-i18n="class_a">Class A (Above 5 Cr)</option>
+                                    <option value="Class_B" selected data-i18n="class_b">Class B (1-5 Cr)</option>
+                                    <option value="Class_C" data-i18n="class_c">Class C (25L-1 Cr)</option>
+                                    <option value="Class_D" data-i18n="class_d">Class D (Below 25L)</option>
                                 </select>
                             </div>
                         </div>
@@ -649,12 +649,12 @@
                                 <small class="hint">The amount government will pay you for this work (as per tender/contract)</small>
                             </div>
                             <div class="form-group">
-                                <label for="bid_percentage">Bid Percentage (if applicable)</label>
+                                <label for="bid_percentage" data-i18n="bid_percentage">Bid Percentage (if applicable)</label>
                                 <div class="bid-input-group">
                                     <select id="bid_type" name="bid_type">
-                                        <option value="at_par">At Par (0%)</option>
-                                        <option value="above">Above (+)</option>
-                                        <option value="below">Below (-)</option>
+                                        <option value="at_par" data-i18n="at_par">At Par (0%)</option>
+                                        <option value="above" data-i18n="above_bid">Above (+)</option>
+                                        <option value="below" data-i18n="below_bid">Below (-)</option>
                                     </select>
                                     <input type="number" id="bid_percentage" name="bid_percentage"
                                            placeholder="0" min="0" max="50" step="0.1" value="0">
@@ -686,10 +686,10 @@
                             <div class="form-group">
                                 <label for="project_type" data-i18n="project_type">Project Type *</label>
                                 <select id="project_type" name="project_type" required>
-                                    <option value="residential">Residential (Housing/Quarters)</option>
-                                    <option value="commercial">Commercial (Offices/Buildings)</option>
-                                    <option value="industrial">Industrial (Factories/Warehouses)</option>
-                                    <option value="infrastructure" selected>Infrastructure (Roads/Bridges)</option>
+                                    <option value="residential" data-i18n="residential_housing">Residential (Housing/Quarters)</option>
+                                    <option value="commercial" data-i18n="commercial_offices">Commercial (Offices/Buildings)</option>
+                                    <option value="industrial" data-i18n="industrial_factories">Industrial (Factories/Warehouses)</option>
+                                    <option value="infrastructure" selected data-i18n="infrastructure_roads">Infrastructure (Roads/Bridges)</option>
                                 </select>
                             </div>
 
@@ -738,7 +738,7 @@
                             </div>
 
                             <div class="form-group">
-                                <label for="num_supervisors">Number of Supervisors</label>
+                                <label for="num_supervisors" data-i18n="num_supervisors">Number of Supervisors</label>
                                 <input type="number" id="num_supervisors" name="num_supervisors" min="1" value="2">
                             </div>
                         </div>
@@ -767,7 +767,7 @@
                             </div>
 
                             <div class="form-group">
-                                <label for="design_type">Design Type</label>
+                                <label for="design_type" data-i18n="design_type">Design Type</label>
                                 <select id="design_type" name="design_type">
                                     <option value="standard">Standard</option>
                                     <option value="custom">Custom</option>
@@ -776,7 +776,7 @@
                             </div>
 
                             <div class="form-group">
-                                <label for="green_building">Green Building Certification</label>
+                                <label for="green_building" data-i18n="green_building">Green Building Certification</label>
                                 <select id="green_building" name="green_building">
                                     <option value="none" selected>None</option>
                                     <option value="basic">Basic (IGBC Silver)</option>
@@ -904,7 +904,7 @@
                         <h3 class="section-title"><i class="fas fa-road"></i> Infrastructure Work Details</h3>
                         <div class="form-grid">
                             <div class="form-group">
-                                <label for="work_type">Work Type *</label>
+                                <label for="work_type" data-i18n="work_type">Work Type *</label>
                                 <select id="work_type" name="work_type">
                                     <option value="road">Road / Highway / Street</option>
                                     <option value="drain">Drain / Nala / Sewage</option>
@@ -914,17 +914,17 @@
                             </div>
 
                             <div class="form-group road-field">
-                                <label for="road_length_m">Road/Drain Length (meters) *</label>
+                                <label for="road_length_m" data-i18n="road_drain_length">Road/Drain Length (meters) *</label>
                                 <input type="number" id="road_length_m" name="road_length_m" min="10" value="500" placeholder="e.g., 1000">
                             </div>
 
                             <div class="form-group road-field">
-                                <label for="road_width_m">Road/Drain Width (meters) *</label>
+                                <label for="road_width_m" data-i18n="road_drain_width">Road/Drain Width (meters) *</label>
                                 <input type="number" id="road_width_m" name="road_width_m" min="1" step="0.5" value="5" placeholder="e.g., 7">
                             </div>
 
                             <div class="form-group road-field">
-                                <label for="road_type">Road Surface Type</label>
+                                <label for="road_type" data-i18n="road_surface_type">Road Surface Type</label>
                                 <select id="road_type" name="road_type">
                                     <option value="bituminous">Bituminous (BT Road)</option>
                                     <option value="concrete">Cement Concrete (CC Road)</option>
@@ -934,12 +934,12 @@
                             </div>
 
                             <div class="form-group drain-field" style="display: none;">
-                                <label for="drain_depth_m">Drain Depth (meters)</label>
+                                <label for="drain_depth_m" data-i18n="drain_depth">Drain Depth (meters)</label>
                                 <input type="number" id="drain_depth_m" name="drain_depth_m" min="0.3" step="0.1" value="0.6" placeholder="e.g., 0.6">
                             </div>
 
                             <div class="form-group drain-field" style="display: none;">
-                                <label for="drain_type">Drain Type</label>
+                                <label for="drain_type" data-i18n="drain_type_label">Drain Type</label>
                                 <select id="drain_type" name="drain_type">
                                     <option value="open">Open Pucca Drain</option>
                                     <option value="covered">Covered Drain</option>
@@ -993,7 +993,7 @@
                         <h3 class="section-title"><i class="fas fa-file-contract"></i> Permits & Regulatory</h3>
                         <div class="form-grid">
                             <div class="form-group">
-                                <label for="permit_status">Permit Status</label>
+                                <label for="permit_status" data-i18n="permit_status">Permit Status</label>
                                 <select id="permit_status" name="permit_status">
                                     <option value="approved">All Approved</option>
                                     <option value="pending" selected>Pending</option>
@@ -1003,7 +1003,7 @@
                             </div>
 
                             <div class="form-group">
-                                <label for="environmental_clearance">Environmental Clearance</label>
+                                <label for="environmental_clearance" data-i18n="environmental_clearance">Environmental Clearance</label>
                                 <select id="environmental_clearance" name="environmental_clearance">
                                     <option value="not_required" selected>Not Required</option>
                                     <option value="approved">Approved</option>
@@ -1718,19 +1718,19 @@
                     <h3><i class="fas fa-table"></i> Key Metrics Summary</h3>
                     <div class="metrics-summary" id="metrics-summary">
                         <div class="metric-item">
-                            <span class="metric-label">Average Cost per sqft</span>
+                            <span class="metric-label" data-i18n="avg_cost_sqft">Average Cost per sqft</span>
                             <span class="metric-value" id="avg-cost-sqft">₹0</span>
                         </div>
                         <div class="metric-item">
-                            <span class="metric-label">Average Delay</span>
+                            <span class="metric-label" data-i18n="avg_delay_label">Average Delay</span>
                             <span class="metric-value" id="avg-delay">0 days</span>
                         </div>
                         <div class="metric-item">
-                            <span class="metric-label">High Risk Projects</span>
+                            <span class="metric-label" data-i18n="high_risk_projects">High Risk Projects</span>
                             <span class="metric-value" id="high-risk-count">0</span>
                         </div>
                         <div class="metric-item">
-                            <span class="metric-label">Most Common Type</span>
+                            <span class="metric-label" data-i18n="most_common_type">Most Common Type</span>
                             <span class="metric-value" id="common-type">-</span>
                         </div>
                     </div>
@@ -1957,8 +1957,8 @@
 
     <footer class="govt-footer">
         <p><i class="fas fa-landmark"></i> Government Construction Cost & Delay Prediction System</p>
-        <p class="footer-note">For Government Contractors | Predictions are estimates for tendering purposes only</p>
-        <p class="footer-disclaimer">This tool is meant for estimation purposes. Actual costs may vary based on site conditions and government rates.</p>
+        <p class="footer-note" data-i18n="footer_for_contractors">For Government Contractors | Predictions are estimates for tendering purposes only</p>
+        <p class="footer-disclaimer" data-i18n="footer_disclaimer">This tool is meant for estimation purposes. Actual costs may vary based on site conditions and government rates.</p>
     </footer>
 
     <!-- PDF Branding Modal -->
