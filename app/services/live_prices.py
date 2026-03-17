@@ -3,6 +3,7 @@ Live Material Price Service
 Fetches real-time construction material prices from various sources
 """
 
+import logging
 import requests
 from bs4 import BeautifulSoup
 from datetime import datetime, timedelta
@@ -12,6 +13,8 @@ import os
 import re
 import threading
 import time
+
+logger = logging.getLogger(__name__)
 
 # Cache file path
 CACHE_PATH = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), 'data', 'live_prices_cache.json')
@@ -108,8 +111,8 @@ class LivePriceService:
             try:
                 with open(CACHE_PATH, 'r') as f:
                     return json.load(f)
-            except:
-                pass
+            except (json.JSONDecodeError, IOError, OSError) as e:
+                logger.warning(f"Failed to load price cache: {e}")
         return {'prices': {}, 'last_updated': None, 'source': 'none'}
 
     def _save_cache(self):
@@ -198,8 +201,8 @@ class LivePriceService:
                 prices['steel_tmt_fe500'] = self._create_price_entry(
                     'steel_tmt_fe500', base_price, 'API'
                 )
-        except:
-            pass
+        except (requests.RequestException, ValueError, KeyError) as e:
+            logger.debug(f"Steel price API unavailable: {e}")
 
         # If API failed, use market simulation based on recent trends
         if 'steel_tmt_fe500' not in prices:
@@ -231,11 +234,12 @@ class LivePriceService:
                         if extracted:
                             prices.update(extracted)
                             break
-                except:
+                except (requests.RequestException, Exception) as e:
+                    logger.debug(f"Cement source failed: {e}")
                     continue
 
-        except:
-            pass
+        except Exception as e:
+            logger.debug(f"Cement price fetch failed: {e}")
 
         # If scraping failed, use market simulation
         if not prices:
@@ -266,8 +270,8 @@ class LivePriceService:
                     if 300 <= price <= 600:
                         prices[key] = self._create_price_entry(key, price, 'Web')
 
-        except:
-            pass
+        except Exception as e:
+            logger.debug(f"Cement page parsing failed: {e}")
 
         return prices
 

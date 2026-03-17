@@ -1,13 +1,17 @@
+import logging
 from flask import Blueprint, request, jsonify, render_template, session, redirect, url_for
-from app import db
+from app import db, limiter
 from app.models.database import Feedback, Prediction
 from functools import wraps
 import os
 
 bp = Blueprint('admin', __name__, url_prefix='/admin')
+logger = logging.getLogger(__name__)
 
-# Admin password - set via environment variable or use default
-ADMIN_PASSWORD = os.environ.get('ADMIN_PASSWORD', 'admin123')
+# Issue #1: No default password — MUST be set via environment variable
+ADMIN_PASSWORD = os.environ.get('ADMIN_PASSWORD')
+if not ADMIN_PASSWORD:
+    logger.warning("ADMIN_PASSWORD not set! Admin panel will be inaccessible. Set the ADMIN_PASSWORD environment variable.")
 
 
 def admin_required(f):
@@ -31,16 +35,24 @@ def login_page():
 
 
 @bp.route('/login', methods=['POST'])
+@limiter.limit("5 per minute")  # Issue #7: Rate limit login attempts to prevent brute force
 def login():
     """Handle admin login"""
     data = request.get_json()
     if not data or 'password' not in data:
         return jsonify({'error': 'Password required'}), 400
 
+    if not ADMIN_PASSWORD:
+        logger.error("Admin login attempted but ADMIN_PASSWORD is not configured")
+        return jsonify({'error': 'Admin panel is not configured. Contact system administrator.'}), 503
+
     if data['password'] == ADMIN_PASSWORD:
         session['admin_logged_in'] = True
+        session.permanent = True  # Issue #12: Enable session timeout
+        logger.info(f"Admin login successful from {request.remote_addr}")
         return jsonify({'success': True}), 200
     else:
+        logger.warning(f"Failed admin login attempt from {request.remote_addr}")
         return jsonify({'error': 'Invalid password'}), 401
 
 
@@ -48,6 +60,7 @@ def login():
 def logout():
     """Handle admin logout"""
     session.pop('admin_logged_in', None)
+    logger.info(f"Admin logout from {request.remote_addr}")
     return jsonify({'success': True}), 200
 
 
@@ -108,4 +121,5 @@ def delete_feedback(feedback_id):
     feedback = Feedback.query.get_or_404(feedback_id)
     db.session.delete(feedback)
     db.session.commit()
+    logger.info(f"Admin deleted feedback {feedback_id} from {request.remote_addr}")
     return jsonify({'success': True}), 200

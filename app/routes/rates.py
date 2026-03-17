@@ -1,7 +1,10 @@
 # API Routes for Live Material Rates & Crowdsourced Prices
+import logging
 from flask import Blueprint, request, jsonify
-from app import db
+from app import db, limiter
 from app.models.database import PriceReport
+
+logger = logging.getLogger(__name__)
 from app.services.material_rates import material_rate_service
 from app.services.live_prices import live_price_service
 from datetime import datetime, timedelta
@@ -88,9 +91,16 @@ def update_material_rate(material_id):
     if not data or 'rate' not in data:
         return jsonify({'error': 'Rate is required'}), 400
 
+    try:
+        rate_value = float(data['rate'])
+        if rate_value <= 0:
+            return jsonify({'error': 'Rate must be positive'}), 400
+    except (ValueError, TypeError):
+        return jsonify({'error': 'Invalid rate value'}), 400
+
     result = material_rate_service.update_material_rate(
         material_id,
-        float(data['rate']),
+        rate_value,
         data.get('region')
     )
 
@@ -230,6 +240,7 @@ def get_live_price_alerts():
 # ============== CROWDSOURCED PRICE ENDPOINTS ==============
 
 @bp.route('/crowdsourced/report', methods=['POST'])
+@limiter.limit("10 per minute")  # Issue #7: Rate limit spam reports
 def report_price():
     """
     Submit a crowdsourced price report.

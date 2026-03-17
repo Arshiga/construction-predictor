@@ -12,4 +12,4 @@ def index():
 @main_bp.route('/health')
 def health():
     """Health check endpoint"""
-    return {'status': 'healthy'}, 200
+    return {'status': 'healthy', 'service': 'construction-cost-predictor'}, 200

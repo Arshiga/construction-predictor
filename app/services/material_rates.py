@@ -2,10 +2,13 @@
 # Provides current market rates, historical trends, and price alerts
 
 import json
+import logging
 import os
 from datetime import datetime, timedelta
 from typing import Dict, List, Optional
 import random
+
+logger = logging.getLogger(__name__)
 
 # Path to rates database
 RATES_DB_PATH = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), 'data', 'material_rates.json')
@@ -53,8 +56,8 @@ class MaterialRateService:
             try:
                 with open(RATES_DB_PATH, 'r') as f:
                     return json.load(f)
-            except:
-                pass
+            except (json.JSONDecodeError, IOError, OSError) as e:
+                logger.warning(f"Failed to load rates database: {e}")
         return self._create_default_rates_db()
 
     def _save_rates_db(self):
